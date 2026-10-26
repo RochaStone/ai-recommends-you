@@ -12,7 +12,7 @@ It writes down who gets named.
 Then it hands you a receipt: recommended x out of 10.
 Plus the three things to publish so you get named next time.
 
-<p align="center"><img src="examples/receipt.sample.png" width="540" alt="A pink guest check titled AI RECEIPT. Ten buyer questions, each marked YOU: NAMED or YOU: NOT NAMED, with a total of recommended 3/10 and a red marker scrawl that says make them say your name."></p>
+<p align="center"><img src="examples/receipt.sample.png" width="540" alt="A pink guest check titled AI RECEIPT. Ten buyer questions, each marked YOU: NAMED or YOU: NOT NAMED, with a total of recommended 3/10 and a red marker scrawl that says build your founder world."></p>
 
 <p align="center"><sub>A sample receipt for a made-up pottery retreat in a made-up town. Every name on it is fictional.</sub></p>
 

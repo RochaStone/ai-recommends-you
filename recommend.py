@@ -254,7 +254,7 @@ def render_receipt(result: dict, meta: dict, name: str, card: bool = False) -> s
       <div class="sub tax"><span>SENT TO INSTEAD</span><span>{_e(_short(instead, 52 if card else 80))}</span></div>
     </div>
     <div class="total"><span>TOTAL</span><span>recommended <b>{result["named"]}/{result["total"]}</b></span></div>
-    <p class="scrawl">make them say your name<svg viewBox="0 0 300 20" aria-hidden="true"><path d="M4 14 C 80 4, 160 18, 296 6" /></svg></p>
+    <p class="scrawl">build your founder world<svg viewBox="0 0 300 20" aria-hidden="true"><path d="M4 14 C 80 4, 160 18, 296 6" /></svg></p>
     <div class="thanks">THANK YOU!</div>
     <div class="credit">Rocha Coded · free tools from the Rocheverse</div>
   </section>

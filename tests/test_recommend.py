@@ -84,7 +84,7 @@ class TestRender(unittest.TestCase):
         page = recommend.render_receipt(r, meta, "Hush Hour Studio")
         self.assertIn("AI RECEIPT", page)
         self.assertIn("THANK YOU!", page)
-        self.assertIn("make them say your name", page)
+        self.assertIn("build your founder world", page)
         self.assertIn("recommended <b>3/11</b>", page)
         self.assertEqual(len(re.findall(r'class="line hit"', page)), 3)
         self.assertEqual(len(re.findall(r'class="line"', page)), 8)
