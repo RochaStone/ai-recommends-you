@@ -203,6 +203,23 @@ class TestStyle(unittest.TestCase):
             (cwd / "style.json").write_text("{}")
             self.assertEqual(recommend.find_style(cwd=cwd, home=home), cwd / "style.json")
 
+    def test_user_style_inherits_only_palette_and_fonts(self):
+        rocha = json.loads(recommend.STYLE_EXAMPLE.read_text())
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "style.json"
+            p.write_text(json.dumps({"palette": {"hero": "#0A7E8C"}, "fonts": {"masthead": ""}, "lines": {}}))
+            style = recommend.load_style(p)
+        self.assertEqual(style["palette"]["hero"], "#0A7E8C")
+        self.assertEqual(style["palette"]["marker"], rocha["palette"]["marker"])
+        self.assertEqual(style["fonts"]["masthead"], rocha["fonts"]["masthead"])
+        for key in ("owner", "handle", "name", "references", "notes"):
+            self.assertFalse(style.get(key), key)
+        self.assertEqual(style["lines"], {})
+        page = recommend.render_receipt(self.result, self.meta, "X", style=style)
+        for hers in [rocha["lines"]["scrawl"], rocha["handle"], rocha["owner"] + " ·"]:
+            self.assertNotIn(hers, page)
+        self.assertIn('<div class="credit">made with Rocha Coded</div>', page)
+
     def test_bundled_examples_share_keys(self):
         rocha = json.loads(recommend.STYLE_EXAMPLE.read_text())
         blank = json.loads((ROOT / "style.example.json").read_text())

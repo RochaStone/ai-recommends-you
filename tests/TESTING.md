@@ -6,8 +6,8 @@ Everything below was run on 26 Oct 2026, on macOS with Python 3.12.8 and Google 
 ```sh
 python3 -m unittest discover -s tests -v
 ```
-Result: **21 tests, all OK.** They cover:
-- style.json: a second palette, fonts, scrawl and owner/handle replace the bundled look; a blank scrawl prints none; bad colour and font values are not injected into the page; the fallback order (./style.json, then ~/.rocha-coded/style.json, then the bundled example); both bundled style files share the same keys
+Result: **22 tests, all OK.** They cover:
+- style.json: a second palette, fonts, scrawl and owner/handle replace the bundled look; a blank scrawl prints none; bad colour and font values are not injected into the page; the fallback order (./style.json, then ~/.rocha-coded/style.json, then the bundled example); both bundled style files share the same keys; a user style borrows only missing palette and font entries, never the example's lines, owner, handle, name, references or notes
 - name extraction from bold text, list items and plain sentences, and that platforms (Google, Instagram) and sentence starts are not counted as names
 - "and" no longer glues two names together (a real bug the tests caught)
 - whole-word, case-insensitive matching of her name and aliases

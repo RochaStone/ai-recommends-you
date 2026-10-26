@@ -40,4 +40,5 @@ Start from `style.example.json`: copy it to `style.json` and fill it in. Or ask 
 ## Good to know
 - Colours must be hex codes (`#RRGGBB`). Anything else is skipped and the bundled colour is used for that slot.
 - Fonts are Google Fonts names, letters, numbers and spaces only. If a font is not on Google Fonts, or you are offline, the receipt uses a similar font already on your computer.
-- Leave `lines.scrawl` empty and the receipt prints no scrawl. Your receipt never borrows someone else's words.
+- Any colour or font you leave empty borrows the bundled example's, so the receipt always looks finished.
+- Your words and your name never borrow. Leave `lines.scrawl`, `owner` or `handle` empty and the receipt prints nothing there.

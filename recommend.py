@@ -245,7 +245,23 @@ def load_style(path: Path | None = None) -> dict:
             data = json.loads(STYLE_EXAMPLE.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             data = {}
-    return data if isinstance(data, dict) else {}
+    data = data if isinstance(data, dict) else {}
+    return data if Path(path) == STYLE_EXAMPLE else inherit_style(data)
+
+
+def inherit_style(user: dict) -> dict:
+    """A user's style borrows ONLY missing palette and font entries from the bundled example.
+    Lines, owner, handle, name, references and notes never fall back to Rocha's."""
+    try:
+        example = json.loads(STYLE_EXAMPLE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        example = {}
+    merged = dict(user)
+    for key in ("palette", "fonts"):
+        mine = user.get(key) if isinstance(user.get(key), dict) else {}
+        base = example.get(key) if isinstance(example.get(key), dict) else {}
+        merged[key] = {**base, **{k: v for k, v in mine.items() if str(v or "").strip()}}
+    return merged
 
 
 def style_head(style: dict) -> str:
