@@ -1,8 +1,8 @@
-/* AI Receipt: Guest Check motif. Rocha Coded palette. */
+/* AI Receipt: Guest Check motif. Defaults are the bundled example; style.json overrides the :root variables. */
 :root {
   --hot: #FF2D8A; --candy: #FFB3D1; --paper: #FFE1EC; --cream: #F6EFE4;
   --ink: #111111; --red: #E0202E; --plum: #4A1033; --gold: #D4A64A; --white: #FFFFFF;
-  --serif: "Fraunces", "Didot", "Bodoni 72", "Playfair Display", Georgia, serif;
+  --serif: "Playfair Display", "Didot", "Bodoni 72", Georgia, serif;
   --cond: "Archivo Narrow", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --mono: "Courier Prime", "Courier New", Courier, monospace;
   --marker: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
@@ -11,8 +11,8 @@
 body {
   background-color: var(--cream);
   background-image:
-    radial-gradient(rgba(74,16,51,.05) 1px, transparent 1px),
-    radial-gradient(rgba(74,16,51,.04) 1px, transparent 1px);
+    radial-gradient(color-mix(in srgb, var(--plum) 5%, transparent) 1px, transparent 1px),
+    radial-gradient(color-mix(in srgb, var(--plum) 4%, transparent) 1px, transparent 1px);
   background-size: 7px 7px, 11px 11px;
   background-position: 0 0, 3px 5px;
   color: var(--ink);
@@ -25,9 +25,9 @@ body.page { padding: 48px 16px 64px; }
   margin: 0 auto;
   max-width: 760px;
   background-color: var(--paper);
-  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 37px, rgba(255,45,138,.28) 37px, rgba(255,45,138,.28) 38px);
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 37px, color-mix(in srgb, var(--hot) 28%, transparent) 37px, color-mix(in srgb, var(--hot) 28%, transparent) 38px);
   border: 2px solid var(--hot);
-  box-shadow: 0 2px 0 rgba(0,0,0,.04), 0 18px 40px rgba(74,16,51,.22), 0 4px 10px rgba(74,16,51,.12);
+  box-shadow: 0 2px 0 rgba(0,0,0,.04), 0 18px 40px color-mix(in srgb, var(--plum) 22%, transparent), 0 4px 10px color-mix(in srgb, var(--plum) 12%, transparent);
   transform: rotate(-.6deg);
   padding: 28px 30px 26px;
 }
@@ -42,7 +42,7 @@ body.page { padding: 48px 16px 64px; }
 .mast h1 {
   font-family: var(--serif); font-weight: 900; color: var(--hot);
   font-size: clamp(44px, 11vw, 92px); line-height: .9; letter-spacing: -.01em; margin: 6px 0 4px;
-  text-shadow: 2px 2px 0 rgba(74,16,51,.12);
+  text-shadow: 2px 2px 0 color-mix(in srgb, var(--plum) 12%, transparent);
 }
 .for { font-family: var(--cond); font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--plum); }
 .for b { color: var(--ink); }
@@ -54,7 +54,7 @@ body.page { padding: 48px 16px 64px; }
 .boxes span { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .lines { list-style: none; margin: 10px 0 0; }
-.line { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; padding: 7px 0; border-bottom: 1px dashed rgba(74,16,51,.25); font-size: 14px; }
+.line { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; padding: 7px 0; border-bottom: 1px dashed color-mix(in srgb, var(--plum) 25%, transparent); font-size: 14px; }
 .line .n { color: var(--hot); font-weight: 700; }
 .line .q { min-width: 0; }
 .line small { display: block; color: var(--plum); opacity: .8; font-size: 12px; margin-top: 2px; }

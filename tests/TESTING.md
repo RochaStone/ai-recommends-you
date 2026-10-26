@@ -6,7 +6,8 @@ Everything below was run on 26 Oct 2026, on macOS with Python 3.12.8 and Google 
 ```sh
 python3 -m unittest discover -s tests -v
 ```
-Result: **16 tests, all OK.** They cover:
+Result: **21 tests, all OK.** They cover:
+- style.json: a second palette, fonts, scrawl and owner/handle replace the bundled look; a blank scrawl prints none; bad colour and font values are not injected into the page; the fallback order (./style.json, then ~/.rocha-coded/style.json, then the bundled example); both bundled style files share the same keys
 - name extraction from bold text, list items and plain sentences, and that platforms (Google, Instagram) and sentence starts are not counted as names
 - "and" no longer glues two names together (a real bug the tests caught)
 - whole-word, case-insensitive matching of her name and aliases
@@ -32,7 +33,12 @@ The PNG was opened and checked by eye: fonts loaded, all ten lines, the total, t
 The page receipt was also rendered at 390px wide (inside an iframe, since headless Chrome on macOS will not size a
 window under 500px): no sideways scroll, lines stack, NAMED tags wrap under each question.
 
-## 3. Security gate
+## 3. A second style, by eye
+A test style (teal and navy, Bodoni Moda, Oswald, IBM Plex Mono, Caveat, its own scrawl) was rendered with
+`--style`. All colours, fonts, the scrawl and the credit line changed. Its taller fonts first pushed the credit line
+off the card, so the card now shrinks the question list until everything fits. Re-rendered: it fits at 1080x1350.
+
+## 4. Security gate
 ```sh
 ./scripts/security-check.sh
 ```

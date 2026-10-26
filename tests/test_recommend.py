@@ -157,5 +157,59 @@ class TestApiParsing(unittest.TestCase):
             os.environ.update(saved)
 
 
+class TestStyle(unittest.TestCase):
+    def setUp(self):
+        meta, answers = recommend.load_answers(SAMPLE)
+        self.meta = meta
+        self.result = recommend.score(answers, "Hush Hour Studio", [], ["Port Halcyon"])
+
+    def test_second_palette_changes_colours_and_scrawl(self):
+        rocha = recommend.render_receipt(self.result, self.meta, "Hush Hour Studio")
+        other = {"owner": "Wren", "handle": "@wrenmakes",
+                 "palette": {"hero": "#0A7E8C", "paper_pink": "#E8F4F1", "marker": "#1B3A6B"},
+                 "fonts": {"masthead": "Bodoni Moda"}, "lines": {"scrawl": "slow hands, full kilns"}}
+        page = recommend.render_receipt(self.result, self.meta, "Hush Hour Studio", style=other)
+        override = lambda html: html.split("<style>:root {")[-1].split("</style>")[0]
+        self.assertIn("--hot: #FF2D8A;", override(rocha))
+        self.assertIn("build your founder world", rocha)
+        self.assertIn("--hot: #0A7E8C;", override(page))
+        self.assertIn("--paper: #E8F4F1;", override(page))
+        self.assertIn("--red: #1B3A6B;", override(page))
+        self.assertNotIn("#FF2D8A", override(page))
+        self.assertIn('--serif: "Bodoni Moda"', page)
+        self.assertIn("family=Bodoni+Moda", page)
+        self.assertIn("slow hands, full kilns", page)
+        self.assertNotIn("build your founder world", page)
+        self.assertIn("Wren · @wrenmakes · made with Rocha Coded", page)
+
+    def test_blank_scrawl_prints_no_scrawl(self):
+        page = recommend.render_receipt(self.result, self.meta, "X", style={"lines": {"scrawl": ""}})
+        self.assertNotIn('class="scrawl"', page)
+
+    def test_bad_values_are_not_injected(self):
+        bad = {"palette": {"hero": "red;}body{display:none"}, "fonts": {"masthead": 'X";}</style>'}}
+        page = recommend.render_receipt(self.result, self.meta, "X", style=bad)
+        self.assertNotIn("display:none", page)
+        self.assertNotIn('X";}', page)
+
+    def test_fallback_order(self):
+        with tempfile.TemporaryDirectory() as d:
+            cwd, home = Path(d) / "work", Path(d) / "home"
+            (home / ".rocha-coded").mkdir(parents=True)
+            cwd.mkdir()
+            self.assertEqual(recommend.find_style(cwd=cwd, home=home), recommend.STYLE_EXAMPLE)
+            (home / ".rocha-coded" / "style.json").write_text("{}")
+            self.assertEqual(recommend.find_style(cwd=cwd, home=home), home / ".rocha-coded" / "style.json")
+            (cwd / "style.json").write_text("{}")
+            self.assertEqual(recommend.find_style(cwd=cwd, home=home), cwd / "style.json")
+
+    def test_bundled_examples_share_keys(self):
+        rocha = json.loads(recommend.STYLE_EXAMPLE.read_text())
+        blank = json.loads((ROOT / "style.example.json").read_text())
+        self.assertEqual(set(rocha), set(blank))
+        for k in ("palette", "fonts", "lines"):
+            self.assertEqual(set(rocha[k]), set(blank[k]))
+
+
 if __name__ == "__main__":
     unittest.main()

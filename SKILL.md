@@ -84,17 +84,39 @@ answer recommends in `named` (you read better than the script; leave it empty an
 ```
 `you_named` is true only if the answer names her brand or her. A link to her site with no name counts as named.
 
-## 5. Build the receipt
+## 5. Make it hers (style.json)
+The receipt takes its colours, fonts, scrawl line and her name and handle from one `style.json`. The same file styles
+every Rocha Coded tool. The tool looks for `style.json` in the working folder, then `~/.rocha-coded/style.json`, then
+uses the bundled example (`SKILL_DIR/examples/style.rocha-coded.json`, Rocha's own look).
+
+If she has no `style.json`, offer once to make one. Never assume her taste is Rocha's.
+1. Ask for 3 to 5 references (screenshots, links, a Pinterest board), her palette if she has one, and the words she
+   says a lot.
+2. Look at every reference (open images, fetch links). Pick a palette as hex codes and fonts from Google Fonts that
+   match them. Take `lines.scrawl` from her own words, never from Rocha's lines.
+3. Copy `SKILL_DIR/style.example.json` to `style.json` in the working folder and fill it in. `SKILL_DIR/STYLE.md`
+   explains each key.
+4. Show her one rendered sample, made from the fictional answers:
+   ```sh
+   python3 "$SKILL_DIR/recommend.py" "$SKILL_DIR/examples/answers.sample.json" --style style.json --out out/style-sample/
+   ```
+   Show her `out/style-sample/receipt.png` (or the HTML if there is no PNG). Adjust until she says yes.
+
+If she says no thanks, use the bundled example look and tell her in one line that it is Rocha's example, and she can
+make it hers any time.
+
+## 6. Build the receipt
 ```sh
 python3 "$SKILL_DIR/recommend.py" out/answers.json --name "Her Brand" --out out/
 ```
-Add `--alias "Her Own Name"` for each other spelling. It writes:
+Add `--alias "Her Own Name"` for each other spelling, and `--style path/to/style.json` to point at a style file
+somewhere else. It writes:
 - `out/receipt.html`: the Guest Check receipt. Opens in any browser.
 - `out/receipt.png`: the 1080x1350 share card (needs Chrome or Chromium; if missing, it says so and the HTML still works).
 - `out/fix-list.md`: the three things to publish so she gets named next time.
 - `out/summary.json`: the numbers.
 
-## 6. Hand it over
+## 7. Hand it over
 Tell her the total in one line ("ChatGPT and Perplexity recommended you 3 out of 10 times"), who they sent her
 buyer to instead, and the first fix. Open the receipt for her if you can. Remind her to run it again in four to six
 weeks with the same questions.

@@ -76,6 +76,11 @@ Straight talk on each one:
 
 AI answers change from day to day. This is a snapshot of today, not a ranking.
 
+## Make it yours
+Your look lives in one file, `style.json`: your colours, fonts, your own scrawl line, and your name and handle on the receipt.
+It ships with two examples: `examples/style.rocha-coded.json` (my pink guest check) and a blank `style.example.json` for yours, explained in `STYLE.md`. Or ask Claude to make one with you from a few references.
+The same file works across every Rocha Coded tool, so you make it once.
+
 ## What's inside
 | File | What it does |
 |---|---|
@@ -83,8 +88,9 @@ AI answers change from day to day. This is a snapshot of today, not a ranking.
 | `recommend.py` | finds the names in each answer, scores you, writes the receipt, the card and the fix list |
 | `ask_api.py` | API mode: asks ChatGPT and Perplexity with plain Python, no extra installs |
 | `assets/receipt.css` | the Guest Check look |
-| `examples/` | the fictional sample: answers, receipt page, share card and fix list |
+| `examples/` | the fictional sample (answers, receipt page, share card, fix list) and Rocha's example style |
 | `tests/` | the smoke tests, and `tests/TESTING.md` with exactly what was run |
+| `style.example.json`, `STYLE.md` | your look in one file, and what each key does |
 | `.env.example` | where API keys go, if you use API mode |
 
 Everything is plain Python from the standard library. No packages to install.

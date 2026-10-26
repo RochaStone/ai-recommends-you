@@ -30,6 +30,19 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 CSS_PATH = HERE / "assets" / "receipt.css"
 CARD_W, CARD_H = 1080, 1350
+STYLE_EXAMPLE = HERE / "examples" / "style.rocha-coded.json"
+COLOUR = re.compile(r"^#[0-9A-Fa-f]{3,8}$")
+FONT_NAME = re.compile(r"^[A-Za-z0-9 ]{1,40}$")
+# style.json palette key -> CSS variable in assets/receipt.css
+PALETTE_VARS = {"hero": "--hot", "accent": "--candy", "paper_pink": "--paper", "paper": "--cream",
+                "ink": "--ink", "marker": "--red", "plum": "--plum", "gold": "--gold"}
+# style.json font key -> (CSS variable, system fallback stack, Google Fonts axes or "")
+FONT_VARS = {
+    "masthead": ("--serif", "Didot, Georgia, serif", "ital,wght@0,400;0,700;0,900;1,400;1,700"),
+    "label": ("--cond", '"Arial Narrow", "Helvetica Neue", Arial, sans-serif', "wght@400;700"),
+    "mono": ("--mono", '"Courier New", Courier, monospace', "wght@400;700"),
+    "scrawl": ("--marker", '"Marker Felt", "Comic Sans MS", cursive', ""),
+}
 
 # Words that start capitalised phrases without being part of a name.
 LEAD_STOP = {
@@ -202,8 +215,67 @@ def _short(s: str, n: int) -> str:
     return s if len(s) <= n else s[: n - 1].rstrip() + "…"
 
 
-def render_receipt(result: dict, meta: dict, name: str, card: bool = False) -> str:
+# Card only: once fonts load, shrink the question list until the whole receipt fits 1080x1350.
+FIT_SCRIPT = """<script>
+(function () {
+  function fit() {
+    var c = document.querySelector(".check"), l = document.querySelector(".lines"), z = 1;
+    while (c.scrollHeight > c.clientHeight + 1 && z > 0.6) { z -= 0.02; l.style.zoom = z; }
+  }
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(fit);
+})();
+</script>"""
+
+
+def find_style(explicit: Path | None = None, cwd: Path | None = None, home: Path | None = None) -> Path:
+    """The shared Rocha Coded fallback order: --style, ./style.json, ~/.rocha-coded/style.json, bundled example."""
+    candidates = [explicit] if explicit else []
+    candidates += [Path(cwd or Path.cwd()) / "style.json",
+                   Path(home or Path.home()) / ".rocha-coded" / "style.json", STYLE_EXAMPLE]
+    return next((Path(c) for c in candidates if c and Path(c).is_file()), STYLE_EXAMPLE)
+
+
+def load_style(path: Path | None = None) -> dict:
+    path = path or STYLE_EXAMPLE
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        print(f"Could not read style file {path} ({exc}). Using the bundled example look.", file=sys.stderr)
+        try:
+            data = json.loads(STYLE_EXAMPLE.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            data = {}
+    return data if isinstance(data, dict) else {}
+
+
+def style_head(style: dict) -> str:
+    """Font links plus a :root block that overrides the receipt colours and fonts. Values are validated."""
+    palette = style.get("palette") if isinstance(style.get("palette"), dict) else {}
+    fonts = style.get("fonts") if isinstance(style.get("fonts"), dict) else {}
+    css_vars, links = [], []
+    for key, var in PALETTE_VARS.items():
+        val = str(palette.get(key) or "").strip()
+        if COLOUR.match(val):
+            css_vars.append(f"{var}: {val};")
+    for key, (var, fallback, axes) in FONT_VARS.items():
+        fam = str(fonts.get(key) or "").strip()
+        if not FONT_NAME.match(fam):
+            continue
+        css_vars.append(f'{var}: "{fam}", {fallback};')
+        q = fam.replace(" ", "+")
+        if axes:  # weighted request first; if the family lacks a weight, the plain link below still loads it
+            links.append(f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={q}:{axes}&display=swap">')
+        links.append(f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={q}&display=swap">')
+    return "\n".join(links) + f"\n<style>:root {{ {' '.join(css_vars)} }}</style>"
+
+
+def render_receipt(result: dict, meta: dict, name: str, card: bool = False, style: dict | None = None) -> str:
     css = CSS_PATH.read_text(encoding="utf-8") if CSS_PATH.exists() else ""
+    style = load_style() if style is None else style
+    lines_cfg = style.get("lines") if isinstance(style.get("lines"), dict) else {}
+    scrawl = str(lines_cfg.get("scrawl") or "").strip()
+    credit = " · ".join(str(x).strip() for x in (style.get("owner"), style.get("handle"), "made with Rocha Coded")
+                        if x and str(x).strip())
     date = meta.get("date") or dt.date.today().isoformat()
     servers = " · ".join(result["sources"].keys()) or "None yet"
     check_no = int(hashlib.sha1(f"{name}{date}".encode()).hexdigest()[:6], 16) % 900000 + 100000
@@ -224,17 +296,16 @@ def render_receipt(result: dict, meta: dict, name: str, card: bool = False) -> s
         for s, v in result["sources"].items()
     )
     instead = ", ".join(x["name"] for x in result["sent_instead"][:3]) or "nobody, yet"
-    fonts = ("https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;700"
-             "&family=Courier+Prime:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,900;"
-             "1,9..144,600&family=Permanent+Marker&display=swap")
+    scrawl_html = (f'<p class="scrawl">{_e(scrawl)}<svg viewBox="0 0 300 20" aria-hidden="true">'
+                   f'<path d="M4 14 C 80 4, 160 18, 296 6" /></svg></p>') if scrawl else ""
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Receipt for {_e(name)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{fonts}">
-<style>{css}</style></head>
+<style>{css}</style>
+{style_head(style)}</head>
 <body class="{"card" if card else "page"}">
 <main class="check" aria-label="AI receipt">
   <header class="mast">
@@ -254,11 +325,11 @@ def render_receipt(result: dict, meta: dict, name: str, card: bool = False) -> s
       <div class="sub tax"><span>SENT TO INSTEAD</span><span>{_e(_short(instead, 52 if card else 80))}</span></div>
     </div>
     <div class="total"><span>TOTAL</span><span>recommended <b>{result["named"]}/{result["total"]}</b></span></div>
-    <p class="scrawl">build your founder world<svg viewBox="0 0 300 20" aria-hidden="true"><path d="M4 14 C 80 4, 160 18, 296 6" /></svg></p>
+    {scrawl_html}
     <div class="thanks">THANK YOU!</div>
-    <div class="credit">Rocha Coded · free tools from the Rocheverse</div>
+    <div class="credit">{_e(credit)}</div>
   </section>
-</main></body></html>"""
+</main>{FIT_SCRIPT if card else ""}</body></html>"""
 
 
 def render_fix_list(result: dict, meta: dict, name: str) -> str:
@@ -366,6 +437,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ignore", action="append", default=[], help="a word to never count as a name")
     ap.add_argument("--out", type=Path, default=Path("out"))
     ap.add_argument("--no-png", action="store_true", help="skip the PNG share card")
+    ap.add_argument("--style", type=Path, help="a style.json (default: ./style.json, then "
+                    "~/.rocha-coded/style.json, then the bundled Rocha Coded example)")
     args = ap.parse_args(argv)
 
     try:
@@ -385,11 +458,16 @@ def main(argv: list[str] | None = None) -> int:
         print("No answers with a question in them. Nothing to score.", file=sys.stderr)
         return 2
 
+    if args.style and not args.style.is_file():
+        print(f"No style file at {args.style}.", file=sys.stderr)
+        return 2
+    style_path = find_style(args.style)
+    style = load_style(style_path)
     out = args.out
     out.mkdir(parents=True, exist_ok=True)
-    (out / "receipt.html").write_text(render_receipt(result, meta, name), encoding="utf-8")
+    (out / "receipt.html").write_text(render_receipt(result, meta, name, style=style), encoding="utf-8")
     card = out / "receipt-card.html"
-    card.write_text(render_receipt(result, meta, name, card=True), encoding="utf-8")
+    card.write_text(render_receipt(result, meta, name, card=True, style=style), encoding="utf-8")
     (out / "fix-list.md").write_text(render_fix_list(result, meta, name), encoding="utf-8")
     summary = {k: result[k] for k in ("total", "named", "sources", "sent_instead", "lost")}
     summary["questions"] = [{k: q[k] for k in ("question", "sources", "named", "you_named")}
@@ -397,6 +475,8 @@ def main(argv: list[str] | None = None) -> int:
     (out / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
     print(f"Recommended {result['named']} out of {result['total']}.")
+    look = "the bundled Rocha Coded example" if style_path == STYLE_EXAMPLE else str(style_path)
+    print(f"Style: {look}")
     print(f"Receipt: {out / 'receipt.html'}")
     print(f"Fix list: {out / 'fix-list.md'}")
     if args.no_png:

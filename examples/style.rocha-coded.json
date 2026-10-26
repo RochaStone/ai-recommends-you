@@ -1,0 +1,39 @@
+{
+  "name": "Rocha Coded",
+  "owner": "Rocha",
+  "handle": "@rocheverse",
+  "site": "https://thrivingera.com",
+  "palette": {
+    "hero": "#FF2D8A",
+    "accent": "#FFB3D1",
+    "paper": "#F6EFE4",
+    "paper_pink": "#FFE1EC",
+    "ink": "#111111",
+    "marker": "#E0202E",
+    "plum": "#4A1033",
+    "gold": "#D4A64A",
+    "cool": "#BFD4EA"
+  },
+  "fonts": {
+    "masthead": "Playfair Display",
+    "label": "Archivo Narrow",
+    "body": "Newsreader",
+    "scrawl": "Permanent Marker",
+    "mono": "Courier Prime"
+  },
+  "motif": "guest-check",
+  "lines": {
+    "masthead": "THE ROCHEVERSE TIMES",
+    "headline": "WHAT IF YOUR FOUNDER WORLD WORKS OUT?",
+    "scrawl": "build your founder world",
+    "todo": "TO DO: BUILD YOUR FOUNDER WORLD",
+    "stamp": "LORE",
+    "celebrate": "I AM SO LUCKY",
+    "affirm": "EVERYTHING WORKS OUT FOR ME"
+  },
+  "references": [
+    "references/moodboard-01.jpg",
+    "https://example.com/a-cover-i-love"
+  ],
+  "notes": "Hot-girl editorial. Pink on paper and ink. Ephemera you could hold."
+}

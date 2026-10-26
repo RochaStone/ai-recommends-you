@@ -1,0 +1,36 @@
+{
+  "name": "",
+  "owner": "",
+  "handle": "",
+  "site": "",
+  "palette": {
+    "hero": "",
+    "accent": "",
+    "paper": "",
+    "paper_pink": "",
+    "ink": "",
+    "marker": "",
+    "plum": "",
+    "gold": "",
+    "cool": ""
+  },
+  "fonts": {
+    "masthead": "",
+    "label": "",
+    "body": "",
+    "scrawl": "",
+    "mono": ""
+  },
+  "motif": "",
+  "lines": {
+    "masthead": "",
+    "headline": "",
+    "scrawl": "",
+    "todo": "",
+    "stamp": "",
+    "celebrate": "",
+    "affirm": ""
+  },
+  "references": [],
+  "notes": ""
+}
