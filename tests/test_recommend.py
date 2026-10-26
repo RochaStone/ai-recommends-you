@@ -128,6 +128,22 @@ class TestApiParsing(unittest.TestCase):
         self.assertTrue(out.startswith("Try Kilnhouse."))
         self.assertIn("- https://x.example", out)
 
+    def test_key_without_model_exits_cleanly(self):
+        import os
+        names = ("OPENAI_API_KEY", "PERPLEXITY_API_KEY", "OPENAI_MODEL", "PERPLEXITY_MODEL")
+        saved = {k: os.environ.pop(k) for k in names if k in os.environ}
+        os.environ["OPENAI_API_KEY"] = "placeholder-for-test"
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                q = Path(d) / "q.json"
+                q.write_text(json.dumps({"questions": ["best pottery"]}))
+                code = ask_api.main([str(q), "--out", str(Path(d) / "a.json"), "--env", str(Path(d) / "none")])
+                self.assertEqual(code, 3)
+                self.assertFalse((Path(d) / "a.json").exists())
+        finally:
+            os.environ.pop("OPENAI_API_KEY", None)
+            os.environ.update(saved)
+
     def test_no_keys_exits_cleanly(self):
         import os
         saved = {k: os.environ.pop(k) for k in ("OPENAI_API_KEY", "PERPLEXITY_API_KEY") if k in os.environ}

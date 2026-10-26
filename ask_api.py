@@ -3,7 +3,8 @@
 
 Reads keys from the environment (copy .env.example to .env and fill it, or export them):
   OPENAI_API_KEY, PERPLEXITY_API_KEY
-Optional: OPENAI_MODEL, PERPLEXITY_MODEL
+and the model for each, set to a current model name from the provider's docs:
+  OPENAI_MODEL, PERPLEXITY_MODEL
 
 Usage:
   python3 ask_api.py out/questions.json --out out/answers.json
@@ -24,8 +25,6 @@ from pathlib import Path
 
 OPENAI_URL = "https://api.openai.com/v1/responses"
 PPLX_URL = "https://api.perplexity.ai/chat/completions"
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
-PPLX_MODEL = os.environ.get("PERPLEXITY_MODEL", "sonar")
 SYSTEM = ("Answer the way you would for any member of the public asking this. "
           "Name specific businesses or people where you can.")
 
@@ -75,7 +74,7 @@ def pplx_text(data: dict) -> str:
 
 
 def ask_openai(q: str, key: str) -> str:
-    body = {"model": OPENAI_MODEL, "instructions": SYSTEM, "input": q,
+    body = {"model": os.environ["OPENAI_MODEL"], "instructions": SYSTEM, "input": q,
             "tools": [{"type": "web_search"}]}
     try:
         return openai_text(post_json(OPENAI_URL, key, body))
@@ -87,7 +86,7 @@ def ask_openai(q: str, key: str) -> str:
 
 
 def ask_pplx(q: str, key: str) -> str:
-    body = {"model": PPLX_MODEL, "messages": [
+    body = {"model": os.environ["PERPLEXITY_MODEL"], "messages": [
         {"role": "system", "content": SYSTEM}, {"role": "user", "content": q}]}
     return pplx_text(post_json(PPLX_URL, key, body))
 
@@ -108,12 +107,17 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     questions = [q for q in qdata.get("questions", []) if isinstance(q, str) and q.strip()]
     providers = []
-    if os.environ.get("OPENAI_API_KEY"):
-        providers.append(("ChatGPT", ask_openai, os.environ["OPENAI_API_KEY"]))
-    if os.environ.get("PERPLEXITY_API_KEY"):
-        providers.append(("Perplexity", ask_pplx, os.environ["PERPLEXITY_API_KEY"]))
+    for source, fn, key_var, model_var in (("ChatGPT", ask_openai, "OPENAI_API_KEY", "OPENAI_MODEL"),
+                                           ("Perplexity", ask_pplx, "PERPLEXITY_API_KEY", "PERPLEXITY_MODEL")):
+        if not os.environ.get(key_var):
+            continue
+        if not os.environ.get(model_var, "").strip():
+            print(f"Set {model_var} in .env to a current {source} model name from its docs, then run again.",
+                  file=sys.stderr)
+            continue
+        providers.append((source, fn, os.environ[key_var]))
     if not providers:
-        print("No OPENAI_API_KEY or PERPLEXITY_API_KEY set. Use browser, self or paste mode instead.",
+        print("API mode is not ready (no key, or no model set). Use browser, self or paste mode instead.",
               file=sys.stderr)
         return 3
     if not questions:

@@ -4,7 +4,7 @@
 
 **Is ChatGPT recommending you?**
 
-Find out who the machines send your dream client to. It isn't you yet.
+What if the machines sent your dream client to you? Ask them the ten questions she asks, and get the receipt.
 
 You tell it your niche, where you are, what you sell and your name.
 It asks the AI assistants the ten questions your buyer would ask.
@@ -64,13 +64,13 @@ Then it asks the assistants, in the first of these modes that works for you.
 | Mode | What it asks | What you need |
 |---|---|---|
 | **Browser** (best) | the real ChatGPT and Perplexity, in your own Chrome | the Claude in Chrome extension, and you already logged in to chatgpt.com and perplexity.ai |
-| **API** | ChatGPT and Perplexity through their developer APIs | your own `OPENAI_API_KEY` and/or `PERPLEXITY_API_KEY` |
+| **API** | ChatGPT and Perplexity through their developer APIs | your own `OPENAI_API_KEY` and/or `PERPLEXITY_API_KEY`, plus the current model name for each |
 | **Self** | Claude itself, answering as it would for a stranger (with web search when it has it) | nothing |
 | **Paste** | whatever you ask by hand | ten minutes and copy-paste |
 
 Straight talk on each one:
 - **Browser mode** is the closest to what your buyer sees. It uses a Temporary Chat in ChatGPT so your own history doesn't tip the answer your way. It never logs in, types a password or signs up for you. If the extension isn't connected, Claude says so and moves on.
-- **API mode** asks the same companies, but API answers are not identical to the apps. The receipt labels them "ChatGPT (API)" and "Perplexity (API)" so you always know. Copy `.env.example` to `.env` and paste your keys there yourself. Never paste a key into the chat.
+- **API mode** asks the same companies, but API answers are not identical to the apps. The receipt labels them "ChatGPT (API)" and "Perplexity (API)" so you always know. Copy `.env.example` to `.env` and paste your keys there yourself, with the current model name from each company's docs in `OPENAI_MODEL` and `PERPLEXITY_MODEL`. Models change often, so the tool never guesses one for you. Never paste a key into the chat.
 - **Self mode** is Claude's own answer, labelled as Claude. Useful on its own, and honest about what it is.
 - **Paste mode** is for when you'd rather do it by hand. Claude gives you the ten questions, you paste back what each app said.
 
