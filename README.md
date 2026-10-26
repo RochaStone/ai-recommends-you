@@ -95,18 +95,19 @@ For the curious, run it by hand:
 python3 recommend.py examples/answers.sample.json --out out/
 ```
 
-## Made by
-This didn't exist, so I built it.
-
-[**Rocha**](https://thrivingera.com)
-Brand Alchemist & AI Architect
-Author of Brand Alchemy in the Thriving Era
-Creator of [Conscious Founder OS](https://founders.thrivingera.com)
-Founder, Thriving Era Studio
-
-Instagram [@rocheverse](https://instagram.com/rocheverse) · Substack [rochastone.substack.com](https://rochastone.substack.com)
-
-*The future doesn't belong to founders who become more like AI. It belongs to the ones who leverage AI to amplify more fully themselves.*
-
 ## Licence
 MIT. See [LICENSE](LICENSE). Copyright (c) 2026 Rochelle Livingstone / Thriving Era Studio.
+
+## Made by Rocha
+
+Rocha
+Brand Alchemist & AI Architect
+Author of *Brand Alchemy in the Thriving Era*
+Creator of [Conscious Founder OS](https://founders.thrivingera.com)
+Founder, [Thriving Era Studio](https://thrivingera.com)
+
+I take female founders AI native in 7 days, and I build what they need next.
+Start with the audit: [thrivingera.com/audit](https://thrivingera.com/audit).
+Or book an exploratory call: [calendly.com/rochelle-thrivingera/exploratory-call](https://calendly.com/rochelle-thrivingera/exploratory-call). It is where we decide if we work together.
+
+[Instagram @rocheverse](https://instagram.com/rocheverse) · [Substack](https://rochastone.substack.com) · [LinkedIn](https://www.linkedin.com/in/rochellelivingstonecosmic) · [More free tools](https://thrivingera.com/free) · [All tools on GitHub](https://github.com/RochaStone)
