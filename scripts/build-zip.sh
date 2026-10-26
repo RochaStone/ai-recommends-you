@@ -1,9 +1,12 @@
 #!/bin/bash
-# Builds dist/<name>.zip for Claude Cowork "Upload a skill". Excludes dev and private files.
+# Builds dist/<name>.zip for Claude Cowork "Upload a skill", wrapped in a <name>/ folder. Excludes dev and private files at any depth.
 set -eu
 cd "$(dirname "$0")/.."
 NAME=$(basename "$PWD")
-mkdir -p dist
+STAGE=$(mktemp -d)
+mkdir -p dist "$STAGE/$NAME"
+rsync -a --exclude '.git' --exclude 'node_modules' --exclude '.venv' --exclude 'dist' --exclude 'out' --exclude 'state' --exclude 'dev' --exclude '__pycache__' --exclude '*.pyc' --exclude '.env*' --exclude '.DS_Store' --exclude 'tests/fixtures/large' ./ "$STAGE/$NAME/"
 rm -f "dist/$NAME.zip"
-zip -qr "dist/$NAME.zip" . -x ".git/*" "node_modules/*" ".venv/*" "dist/*" "out/*" "state/*" "__pycache__/*" "*.pyc" ".env*" ".DS_Store" "tests/fixtures/large/*"
+(cd "$STAGE" && zip -qr "$OLDPWD/dist/$NAME.zip" "$NAME")
+rm -rf "$STAGE"
 echo "built dist/$NAME.zip ($(du -h "dist/$NAME.zip" | cut -f1))"

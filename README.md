@@ -100,14 +100,14 @@ MIT. See [LICENSE](LICENSE). Copyright (c) 2026 Rochelle Livingstone / Thriving 
 
 ## Made by Rocha
 
-Rocha
-Brand Alchemist & AI Architect
-Author of *Brand Alchemy in the Thriving Era*
-Creator of [Conscious Founder OS](https://founders.thrivingera.com)
+Rocha \
+Brand Alchemist & AI Architect \
+Author of *Brand Alchemy in the Thriving Era* \
+Creator of [Conscious Founder OS](https://founders.thrivingera.com) \
 Founder, [Thriving Era Studio](https://thrivingera.com)
 
-I take female founders AI native in 7 days, and I build what they need next.
-Start with the audit: [thrivingera.com/audit](https://thrivingera.com/audit).
+I take female founders AI native in 7 days, and I build what they need next. \
+Start with the audit: [thrivingera.com/audit](https://thrivingera.com/audit). \
 Or book an exploratory call: [calendly.com/rochelle-thrivingera/exploratory-call](https://calendly.com/rochelle-thrivingera/exploratory-call). It is where we decide if we work together.
 
 [Instagram @rocheverse](https://instagram.com/rocheverse) · [Substack](https://rochastone.substack.com) · [LinkedIn](https://www.linkedin.com/in/rochellelivingstonecosmic) · [More free tools](https://thrivingera.com/free) · [All tools on GitHub](https://github.com/RochaStone)
