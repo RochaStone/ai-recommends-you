@@ -1,0 +1,106 @@
+---
+name: ai-recommends-you
+description: Find out whether ChatGPT, Perplexity and Claude recommend her business when a buyer asks. Asks the ten questions her dream client would ask, records who gets named, and hands back a pink Guest Check receipt (recommended x/10), a 1080x1350 share card and a three-step fix list. Use when someone says "is chatgpt recommending me", "does AI recommend my business", "ai recommendation audit", "who does ai recommend", "am I showing up in ChatGPT", "AI visibility check", or "make me the AI receipt".
+---
+
+# AI Recommends You
+
+You are running a small, honest test: when her dream client asks an AI assistant for help, does it say her name?
+You ask the questions, you write down exactly what came back, and you build the receipt. You never invent an answer,
+never pad the score, and never claim a source you did not ask.
+
+`SKILL_DIR` below means the folder this file lives in. Write all output to `out/` inside the user's working folder
+(in Cowork, the folder she shared), never inside `SKILL_DIR`.
+
+## 1. Collect the brief
+Ask in one short message, then wait:
+1. Her niche, in her buyer's words (for example "pottery retreats for burnt-out lawyers").
+2. Where she is, or "online" if location does not matter.
+3. What she sells (the main offer, one line).
+4. Her brand name exactly as a buyer would type it, plus any other spelling or her own name if people book her by name.
+5. Optional: up to three competitors she wants to watch.
+
+## 2. Write ten buyer questions
+Plain buyer language, the way a person types into ChatGPT. No marketing words. Mix these shapes:
+- "best [niche] in [place]" and "top [niche] near [place]"
+- "who should I hire for [the problem she solves]"
+- "[offer] for [her buyer] in [place]"
+- "is [her name] any good" and "[her name] reviews"
+- one gift or referral question ("best gift for a [buyer]", "who do you recommend for ...")
+- one question with no location, if she sells online too
+
+Show her the ten and let her swap any. Then save `out/questions.json`:
+```json
+{"meta": {"name": "", "aliases": [], "niche": "", "location": "", "offer": "", "competitors": [], "date": "YYYY-MM-DD"},
+ "questions": ["...ten strings..."]}
+```
+
+## 3. Ask the assistants
+Use the first mode that works. You can combine modes; every answer records its own `source`.
+
+### Browser mode (best: the real ChatGPT and Perplexity she would see)
+Needs the Claude in Chrome extension connected, and her already logged in to chatgpt.com and perplexity.ai.
+Check for the browser tools (names like `tabs_context_mcp`, `navigate`, `find`, `computer`, `get_page_text`).
+If they are not there, say so in one line and move to API mode.
+
+For ChatGPT:
+1. Open a new tab at `https://chatgpt.com/`. If you see a login screen, stop and ask her to log in herself.
+   Never type a password, never sign up, never accept anything on her behalf.
+2. Turn on Temporary Chat (the toggle near the top of a new chat) so her own chat history and memory do not
+   steer the answer toward her. If you cannot find it, note `"memory may apply"` in that answer.
+3. For each question: start a new chat, type the question exactly, send it, wait until the answer stops growing,
+   then copy the full answer text with `get_page_text` or by reading the last reply. Save it with source `ChatGPT`.
+4. Wait a few seconds between questions. If ChatGPT shows a limit or a captcha, stop and tell her.
+
+For Perplexity:
+1. Open `https://www.perplexity.ai/`. Logged out works too, with lower limits.
+2. For each question: start a new thread, type the question, send, wait for the answer to finish,
+   copy the answer text including the source list. Save with source `Perplexity`.
+
+### API mode (no browser needed)
+If `OPENAI_API_KEY` or `PERPLEXITY_API_KEY` is set (exported, or in a `.env` copied from `SKILL_DIR/.env.example`):
+```sh
+python3 "$SKILL_DIR/ask_api.py" out/questions.json --out out/answers.json
+```
+Tell her plainly: the API answers come from the same companies but are not identical to the app she uses.
+Sources are saved as `ChatGPT (API)` and `Perplexity (API)`. Never ask her to paste a key into the chat.
+If she wants API mode, tell her to put the key in `.env` herself.
+
+### Self mode (always available)
+Answer each question yourself as Claude would for a stranger. If you have web search, search first and answer
+from what you find. Do not use anything she told you in this conversation about her business. Answer as if you
+had never met her. Save with source `Claude`. Say on the receipt run that this is your own answer.
+
+### Paste mode (she does it by hand)
+If she would rather ask the apps herself, give her the ten questions as a numbered list and ask her to paste
+each answer back with the app's name. Save each with the source she names.
+
+## 4. Save the answers
+Write `out/answers.json`. Keep the answer text word for word. For each answer, list the businesses and people the
+answer recommends in `named` (you read better than the script; leave it empty and the script will guess):
+```json
+{"meta": {"name": "Her Brand", "aliases": [], "niche": "", "location": "", "offer": "", "date": "YYYY-MM-DD"},
+ "answers": [{"question": "...", "source": "ChatGPT", "answer": "full text", "named": ["Other Studio"], "you_named": false}]}
+```
+`you_named` is true only if the answer names her brand or her. A link to her site with no name counts as named.
+
+## 5. Build the receipt
+```sh
+python3 "$SKILL_DIR/recommend.py" out/answers.json --name "Her Brand" --out out/
+```
+Add `--alias "Her Own Name"` for each other spelling. It writes:
+- `out/receipt.html`: the Guest Check receipt. Opens in any browser.
+- `out/receipt.png`: the 1080x1350 share card (needs Chrome or Chromium; if missing, it says so and the HTML still works).
+- `out/fix-list.md`: the three things to publish so she gets named next time.
+- `out/summary.json`: the numbers.
+
+## 6. Hand it over
+Tell her the total in one line ("ChatGPT and Perplexity recommended you 3 out of 10 times"), who they sent her
+buyer to instead, and the first fix. Open the receipt for her if you can. Remind her to run it again in four to six
+weeks with the same questions.
+
+## Rules
+- Record what the assistants said. Never improve, soften or guess an answer.
+- Never name a source you did not ask. The receipt lists every source that answered.
+- Answers vary from day to day. This is a snapshot, not a ranking. Say so if she asks.
+- No logins, passwords, purchases or sign-ups on her behalf. Keys stay in `.env`, never in the chat or the output.

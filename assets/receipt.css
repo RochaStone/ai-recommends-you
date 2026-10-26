@@ -1,0 +1,108 @@
+/* AI Receipt: Guest Check motif. Rocha Coded palette. */
+:root {
+  --hot: #FF2D8A; --candy: #FFB3D1; --paper: #FFE1EC; --cream: #F6EFE4;
+  --ink: #111111; --red: #E0202E; --plum: #4A1033; --gold: #D4A64A; --white: #FFFFFF;
+  --serif: "Fraunces", "Didot", "Bodoni 72", "Playfair Display", Georgia, serif;
+  --cond: "Archivo Narrow", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Courier Prime", "Courier New", Courier, monospace;
+  --marker: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(rgba(74,16,51,.05) 1px, transparent 1px),
+    radial-gradient(rgba(74,16,51,.04) 1px, transparent 1px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 5px;
+  color: var(--ink);
+  font-family: var(--mono);
+}
+body.page { padding: 48px 16px 64px; }
+
+.check {
+  position: relative;
+  margin: 0 auto;
+  max-width: 760px;
+  background-color: var(--paper);
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 37px, rgba(255,45,138,.28) 37px, rgba(255,45,138,.28) 38px);
+  border: 2px solid var(--hot);
+  box-shadow: 0 2px 0 rgba(0,0,0,.04), 0 18px 40px rgba(74,16,51,.22), 0 4px 10px rgba(74,16,51,.12);
+  transform: rotate(-.6deg);
+  padding: 28px 30px 26px;
+}
+.check::before { /* torn top edge */
+  content: ""; position: absolute; left: -2px; right: -2px; top: -10px; height: 12px;
+  background: linear-gradient(-45deg, var(--paper) 6px, transparent 0) 0 6px / 12px 12px repeat-x,
+              linear-gradient(45deg, var(--paper) 6px, transparent 0) 0 6px / 12px 12px repeat-x;
+}
+
+.mast { text-align: center; border-bottom: 3px double var(--hot); padding-bottom: 12px; }
+.kicker { font-family: var(--cond); font-weight: 700; letter-spacing: .22em; font-size: 13px; color: var(--plum); }
+.mast h1 {
+  font-family: var(--serif); font-weight: 900; color: var(--hot);
+  font-size: clamp(44px, 11vw, 92px); line-height: .9; letter-spacing: -.01em; margin: 6px 0 4px;
+  text-shadow: 2px 2px 0 rgba(74,16,51,.12);
+}
+.for { font-family: var(--cond); font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--plum); }
+.for b { color: var(--ink); }
+
+.boxes { display: grid; grid-template-columns: 1.1fr 1.6fr .8fr .9fr; border: 2px solid var(--hot); border-top: 0; background: var(--white); }
+.boxes div { padding: 6px 8px; border-right: 1px solid var(--candy); min-width: 0; }
+.boxes div:last-child { border-right: 0; }
+.boxes label { display: block; font-family: var(--cond); font-weight: 700; font-size: 10px; letter-spacing: .18em; color: var(--hot); }
+.boxes span { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.lines { list-style: none; margin: 10px 0 0; }
+.line { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; padding: 7px 0; border-bottom: 1px dashed rgba(74,16,51,.25); font-size: 14px; }
+.line .n { color: var(--hot); font-weight: 700; }
+.line .q { min-width: 0; }
+.line small { display: block; color: var(--plum); opacity: .8; font-size: 12px; margin-top: 2px; }
+.line .you { font-family: var(--cond); font-weight: 700; font-size: 12px; letter-spacing: .1em; padding: 2px 7px; border: 1.5px solid var(--ink); white-space: nowrap; align-self: center; }
+.line.hit .you { background: var(--hot); color: var(--white); border-color: var(--hot); }
+
+.foot { margin-top: 12px; }
+.sub { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 2px 0; }
+.sub.tax { color: var(--plum); }
+.sub.tax span:last-child { text-align: right; }
+.total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-top: 3px double var(--ink); border-bottom: 3px double var(--ink);
+  margin-top: 8px; padding: 8px 0; font-family: var(--cond); font-weight: 700; letter-spacing: .08em; font-size: 20px;
+}
+.total b { font-family: var(--serif); font-size: 40px; color: var(--hot); letter-spacing: 0; }
+.scrawl {
+  font-family: var(--marker); color: var(--red); font-size: 30px; line-height: 1.1;
+  transform: rotate(-4deg); margin: 18px 0 4px 6px; display: inline-block; position: relative;
+}
+.scrawl svg { display: block; width: 100%; height: 14px; }
+.scrawl path { fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round; }
+.thanks { text-align: center; font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 34px; color: var(--hot); margin-top: 6px; }
+.credit { text-align: center; font-family: var(--cond); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--plum); margin-top: 4px; }
+
+/* Share card: exactly 1080 x 1350 */
+body.card { width: 1080px; height: 1350px; overflow: hidden; padding: 56px 70px; }
+body.card .check { max-width: none; height: 1238px; padding: 34px 44px 28px; display: flex; flex-direction: column; }
+body.card .kicker { font-size: 18px; }
+body.card .mast h1 { font-size: 132px; }
+body.card .for { font-size: 20px; }
+body.card .boxes label { font-size: 13px; }
+body.card .boxes span { font-size: 18px; }
+body.card .lines { flex: 1; margin-top: 10px; }
+body.card .line { font-size: 19px; padding: 7px 0; grid-template-columns: 44px 1fr auto; }
+body.card .line small { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.card .line .you { font-size: 15px; }
+body.card .sub { font-size: 18px; }
+body.card .total { font-size: 26px; padding: 6px 0; }
+body.card .total b { font-size: 56px; }
+body.card .scrawl { font-size: 44px; margin-top: 10px; }
+body.card .thanks { font-size: 40px; margin-top: 0; }
+body.card .credit { font-size: 13px; }
+
+@media (max-width: 560px) {
+  .boxes { grid-template-columns: 1fr 1fr; }
+  .boxes div:nth-child(2) { border-right: 0; }
+  .line { grid-template-columns: 26px 1fr; }
+  .line .you { grid-column: 2; justify-self: start; }
+  .check { padding: 22px 16px; transform: none; }
+}
