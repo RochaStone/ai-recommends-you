@@ -6,7 +6,7 @@ Everything below was run on 26 Oct 2026, on macOS with Python 3.12.8 and Google 
 ```sh
 python3 -m unittest discover -s tests -v
 ```
-Result: **15 tests, all OK.** They cover:
+Result: **16 tests, all OK.** They cover:
 - name extraction from bold text, list items and plain sentences, and that platforms (Google, Instagram) and sentence starts are not counted as names
 - "and" no longer glues two names together (a real bug the tests caught)
 - whole-word, case-insensitive matching of her name and aliases
@@ -15,7 +15,7 @@ Result: **15 tests, all OK.** They cover:
 - the fix list has exactly three sections, lists the lost questions and has no em dashes
 - the command line writes receipt.html, receipt-card.html, fix-list.md and summary.json
 - the sample PNG is 1080x1350
-- API mode: parsing OpenAI and Perplexity reply shapes (fake replies, no network), and a clean exit with no keys set
+- API mode: parsing OpenAI and Perplexity reply shapes (fake replies, no network), and a clean exit with no keys set or with a key but no model set
 
 ## 2. Sample receipt, end to end
 ```sh
