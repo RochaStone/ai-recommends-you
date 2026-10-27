@@ -231,5 +231,71 @@ class TestStyle(unittest.TestCase):
             self.assertEqual(set(rocha[k]), set(blank[k]))
 
 
+class TestMotifs(unittest.TestCase):
+    def setUp(self):
+        meta, answers = recommend.load_answers(SAMPLE)
+        self.meta = meta
+        self.result = recommend.score(answers, "Hush Hour Studio", [], ["Port Halcyon"])
+
+    def render(self, motif, card=False, style=None):
+        return recommend.render_receipt(self.result, self.meta, "Hush Hour Studio", card=card, style=style, motif=motif)
+
+    def test_each_motif_has_its_signature(self):
+        analog, cyber, y2k = (self.render(m) for m in recommend.MOTIFS)
+        self.assertIn('class="page m-analog"', analog)
+        self.assertIn("AI RECEIPT", analog)
+        self.assertIn('class="page m-cyberpunk"', cyber)
+        self.assertIn("rocheverse:~$</span> ask --for", cyber)
+        self.assertIn('class="cursor"', cyber)
+        self.assertIn('class="page m-y2k-blog"', y2k)
+        self.assertIn("ai-receipt.exe", y2k)
+        self.assertIn("visitor no.<br><b>000,777</b>", y2k)
+        self.assertIn("mood</h3><p>delulu ✧", y2k)
+        self.assertIn("github.com/RochaStone/ai-recommends-you/issues", y2k)
+        self.assertIn("AI RECEIPT", y2k)  # the receipt sits inside the window
+
+    def test_same_data_in_every_motif(self):
+        for m in recommend.MOTIFS:
+            page = self.render(m)
+            self.assertIn("3/10", page, m)
+            self.assertIn("Kilnhouse Retreats", page, m)
+            self.assertIn("build your founder world", page, m)
+
+    def test_cyberpunk_block_bars(self):
+        cyber = self.render("cyberpunk")
+        self.assertIn('<b>█</b>░░░░░░░░░', cyber)       # ChatGPT 1/10
+        self.assertIn('<b>███</b>░░░░░░░', cyber)       # Perplexity 3/10 and the total 3/10
+        self.assertIn("family=Silkscreen", cyber)        # pixel labels
+        self.assertNotIn("family=Silkscreen", self.render("analog"))
+
+    def test_cards_carry_the_fit_script(self):
+        for m in recommend.MOTIFS:
+            card = self.render(m, card=True)
+            self.assertIn(f'class="card m-{m}"', card)
+            self.assertIn('querySelector(".fit")', card)
+            self.assertEqual(len(re.findall(r'class="[^"]*\bfit\b', card)), 1, m)  # exactly one box to fit
+
+    def test_motif_choice_and_aliases(self):
+        self.assertEqual(recommend.resolve_motif(None, {}), "analog")
+        self.assertEqual(recommend.resolve_motif(None, {"motif": "guest-check"}), "analog")
+        self.assertEqual(recommend.resolve_motif(None, {"motif": "retro-tv"}), "cyberpunk")
+        self.assertEqual(recommend.resolve_motif(None, {"motif": "sticker-collage"}), "y2k-blog")
+        self.assertEqual(recommend.resolve_motif("cyberpunk", {"motif": "y2k-blog"}), "cyberpunk")
+        self.assertEqual(recommend.resolve_motif(None, {"motif": "something else"}), "analog")
+
+    def test_no_glow_in_any_skin(self):
+        for f in ("receipt.css", "motif-cyberpunk.css", "motif-y2k.css"):
+            css = (ROOT / "assets" / f).read_text()
+            self.assertNotIn("text-shadow", css, f)
+            self.assertNotIn("drop-shadow", css, f)
+
+    def test_cli_motif_flag(self):
+        with tempfile.TemporaryDirectory() as d:
+            code = recommend.main([str(SAMPLE), "--out", d, "--no-png", "--motif", "y2k-blog"])
+            self.assertEqual(code, 0)
+            self.assertIn("ai-receipt.exe", (Path(d) / "receipt.html").read_text())
+            self.assertIn('class="card m-y2k-blog"', (Path(d) / "receipt-card.html").read_text())
+
+
 if __name__ == "__main__":
     unittest.main()

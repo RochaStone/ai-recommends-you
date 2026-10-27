@@ -9,40 +9,20 @@ named for each buyer question, scores how often YOU were named, and writes:
   out/summary.json   the numbers, for the agent to read back
 
 Stdlib only. Python 3.10+.
-Usage: python3 recommend.py out/answers.json --name "Her Brand" --out out/
+Usage: python3 recommend.py out/answers.json --name "Her Brand" --out out/ [--motif analog|cyberpunk|y2k-blog]
 """
 from __future__ import annotations
 
 import argparse
-import datetime as dt
-import hashlib
-import html
 import json
-import os
 import re
-import shutil
-import struct
-import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
-CSS_PATH = HERE / "assets" / "receipt.css"
-CARD_W, CARD_H = 1080, 1350
-STYLE_EXAMPLE = HERE / "examples" / "style.rocha-coded.json"
-COLOUR = re.compile(r"^#[0-9A-Fa-f]{3,8}$")
-FONT_NAME = re.compile(r"^[A-Za-z0-9 ]{1,40}$")
-# style.json palette key -> CSS variable in assets/receipt.css. hero is the GROUND (page behind the card), never a fill.
-PALETTE_VARS = {"hero": "--ground", "wine": "--wine", "accent": "--candy", "paper_pink": "--paper",
-                "paper": "--cream", "ink": "--ink", "marker": "--marker", "plum": "--plum", "gold": "--gold"}
-# style.json font key -> (CSS variable, system fallback stack, Google Fonts axes or "")
-FONT_VARS = {
-    "masthead": ("--serif", 'Georgia, "Times New Roman", serif', "ital,wght@0,400;0,900;1,400;1,900"),
-    "label": ("--label", 'system-ui, "Helvetica Neue", Arial, sans-serif', "wght@400;600;800"),
-    "mono": ("--mono", "ui-monospace, Menlo, Consolas, monospace", "wght@400;500"),
-    "scrawl": ("--scrawl", '"Marker Felt", "Comic Sans MS", cursive', ""),
-}
+from receipt_render import (  # noqa: F401  (re-exported for tests and callers)
+    CARD_H, CARD_W, MOTIFS, STYLE_EXAMPLE, find_chrome, find_style, inherit_style, load_style, png_size,
+    render_png, render_receipt, resolve_motif, style_head,
+)
 
 # Words that start capitalised phrases without being part of a name.
 LEAD_STOP = {
@@ -205,148 +185,7 @@ def score(answers: list[dict], name: str, aliases: list[str], ignore: list[str])
     }
 
 
-# ---------- rendering ----------
-
-def _e(s: object) -> str:
-    return html.escape(str(s), quote=True)
-
-
-def _short(s: str, n: int) -> str:
-    return s if len(s) <= n else s[: n - 1].rstrip() + "…"
-
-
-# Card only: once fonts load, shrink the question list until the whole receipt fits 1080x1350.
-FIT_SCRIPT = """<script>
-(function () {
-  function fit() {
-    var c = document.querySelector(".check"), l = document.querySelector(".lines"), z = 1;
-    while (c.scrollHeight > c.clientHeight + 1 && z > 0.6) { z -= 0.02; l.style.zoom = z; }
-  }
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(fit);
-})();
-</script>"""
-
-
-def find_style(explicit: Path | None = None, cwd: Path | None = None, home: Path | None = None) -> Path:
-    """The shared Rocha Coded fallback order: --style, ./style.json, ~/.rocha-coded/style.json, bundled example."""
-    candidates = [explicit] if explicit else []
-    candidates += [Path(cwd or Path.cwd()) / "style.json",
-                   Path(home or Path.home()) / ".rocha-coded" / "style.json", STYLE_EXAMPLE]
-    return next((Path(c) for c in candidates if c and Path(c).is_file()), STYLE_EXAMPLE)
-
-
-def load_style(path: Path | None = None) -> dict:
-    path = path or STYLE_EXAMPLE
-    try:
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
-    except (OSError, ValueError) as exc:
-        print(f"Could not read style file {path} ({exc}). Using the bundled example look.", file=sys.stderr)
-        try:
-            data = json.loads(STYLE_EXAMPLE.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            data = {}
-    data = data if isinstance(data, dict) else {}
-    return data if Path(path) == STYLE_EXAMPLE else inherit_style(data)
-
-
-def inherit_style(user: dict) -> dict:
-    """A user's style borrows ONLY missing palette and font entries from the bundled example.
-    Lines, owner, handle, name, references and notes never fall back to Rocha's."""
-    try:
-        example = json.loads(STYLE_EXAMPLE.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        example = {}
-    merged = dict(user)
-    for key in ("palette", "fonts"):
-        mine = user.get(key) if isinstance(user.get(key), dict) else {}
-        base = example.get(key) if isinstance(example.get(key), dict) else {}
-        merged[key] = {**base, **{k: v for k, v in mine.items() if str(v or "").strip()}}
-    return merged
-
-
-def style_head(style: dict) -> str:
-    """Font links plus a :root block that overrides the receipt colours and fonts. Values are validated."""
-    palette = style.get("palette") if isinstance(style.get("palette"), dict) else {}
-    fonts = style.get("fonts") if isinstance(style.get("fonts"), dict) else {}
-    css_vars, links = [], []
-    for key, var in PALETTE_VARS.items():
-        val = str(palette.get(key) or "").strip()
-        if COLOUR.match(val):
-            css_vars.append(f"{var}: {val};")
-    for key, (var, fallback, axes) in FONT_VARS.items():
-        fam = str(fonts.get(key) or "").strip()
-        if not FONT_NAME.match(fam):
-            continue
-        css_vars.append(f'{var}: "{fam}", {fallback};')
-        q = fam.replace(" ", "+")
-        if axes:  # weighted request first; if the family lacks a weight, the plain link below still loads it
-            links.append(f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={q}:{axes}&display=swap">')
-        links.append(f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={q}&display=swap">')
-    return "\n".join(links) + f"\n<style>:root {{ {' '.join(css_vars)} }}</style>"
-
-
-def render_receipt(result: dict, meta: dict, name: str, card: bool = False, style: dict | None = None) -> str:
-    css = CSS_PATH.read_text(encoding="utf-8") if CSS_PATH.exists() else ""
-    style = load_style() if style is None else style
-    lines_cfg = style.get("lines") if isinstance(style.get("lines"), dict) else {}
-    scrawl = str(lines_cfg.get("scrawl") or "").strip()
-    credit = " · ".join(str(x).strip() for x in (style.get("owner"), style.get("handle"), "made with Rocha Coded")
-                        if x and str(x).strip())
-    date = meta.get("date") or dt.date.today().isoformat()
-    servers = " · ".join(result["sources"].keys()) or "None yet"
-    check_no = int(hashlib.sha1(f"{name}{date}".encode()).hexdigest()[:6], 16) % 900000 + 100000
-    qlen, nlen = (52, 60) if card else (90, 80)
-    lines = []
-    for i, q in enumerate(result["questions"], 1):
-        who = ", ".join(q["named"][:3]) + (" +more" if len(q["named"]) > 3 else "")
-        tag = "NAMED" if q["you_named"] else "NOT NAMED"
-        lines.append(
-            f'<li class="line{" hit" if q["you_named"] else ""}">'
-            f'<span class="n">{i:02d}</span>'
-            f'<span class="q">{_e(_short(q["question"], qlen))}'
-            f'<small>{_e(_short(who or "nobody named", nlen))}</small></span>'
-            f'<span class="you">YOU: {tag}</span></li>'
-        )
-    subtotals = "".join(
-        f'<div class="sub"><span>{_e(s)}</span><span>{v["named"]}/{v["asked"]}</span></div>'
-        for s, v in result["sources"].items()
-    )
-    instead = ", ".join(x["name"] for x in result["sent_instead"][:3]) or "nobody, yet"
-    scrawl_html = (f'<p class="scrawl">{_e(scrawl)}<svg viewBox="0 0 300 20" aria-hidden="true">'
-                   f'<path d="M4 14 C 80 4, 160 18, 296 6" /></svg></p>') if scrawl else ""
-    return f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Receipt for {_e(name)}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<style>{css}</style>
-{style_head(style)}</head>
-<body class="{"card" if card else "page"}">
-<main class="check" aria-label="AI receipt">
-  <header class="mast">
-    <div class="kicker">GUEST CHECK · IS AI RECOMMENDING YOU?</div>
-    <h1>AI RECEIPT</h1>
-    <div class="for">for <b>{_e(name)}</b>{(" · " + _e(meta["niche"])) if meta.get("niche") else ""}{(" · " + _e(meta["location"])) if meta.get("location") else ""}</div>
-  </header>
-  <div class="boxes">
-    <div><label>TABLE NO</label><span>{_e(date)}</span></div>
-    <div><label>SERVER</label><span>{_e(servers)}</span></div>
-    <div><label>GUESTS</label><span>{result["total"]} Qs</span></div>
-    <div><label>CHECK NO</label><span>{check_no}</span></div>
-  </div>
-  <ol class="lines">{"".join(lines)}</ol>
-  <section class="foot">
-    <div class="subs">{subtotals}
-      <div class="sub tax"><span>SENT TO INSTEAD</span><span>{_e(_short(instead, 52 if card else 80))}</span></div>
-    </div>
-    <div class="total"><span>TOTAL</span><span>recommended <b>{result["named"]}/{result["total"]}</b></span></div>
-    {scrawl_html}
-    <div class="thanks">THANK YOU!</div>
-    <div class="credit">{_e(credit)}</div>
-  </section>
-</main>{FIT_SCRIPT if card else ""}</body></html>"""
-
+# ---------- fix list ----------
 
 def render_fix_list(result: dict, meta: dict, name: str) -> str:
     niche = meta.get("niche") or "your niche"
@@ -394,57 +233,6 @@ Run the receipt again in four to six weeks. Same questions, same assistants. Wat
 """
 
 
-# ---------- PNG share card ----------
-
-def find_chrome() -> str | None:
-    env = os.environ.get("CHROME_PATH")
-    if env and Path(env).exists():
-        return env
-    for cmd in ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser",
-                "chrome", "microsoft-edge"):
-        p = shutil.which(cmd)
-        if p:
-            return p
-    for p in ("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-              "/Applications/Chromium.app/Contents/MacOS/Chromium",
-              "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-              r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-              r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"):
-        if Path(p).exists():
-            return p
-    return None
-
-
-def png_size(path: Path) -> tuple[int, int]:
-    with path.open("rb") as f:
-        head = f.read(24)
-    if head[:8] != b"\x89PNG\r\n\x1a\n":
-        raise ValueError("not a PNG")
-    return struct.unpack(">II", head[16:24])
-
-
-def render_png(card_html: Path, png: Path) -> tuple[bool, str]:
-    chrome = find_chrome()
-    if not chrome:
-        return False, ("No Chrome or Chromium found, so no PNG this time. The receipt HTML is ready. "
-                       "Install Chrome, or set CHROME_PATH, then run again for the share card.")
-    with tempfile.TemporaryDirectory() as profile:
-        cmd = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run",
-               "--no-default-browser-check", f"--user-data-dir={profile}",
-               f"--window-size={CARD_W},{CARD_H}", "--force-device-scale-factor=1",
-               "--virtual-time-budget=6000", f"--screenshot={png}", card_html.resolve().as_uri()]
-        if hasattr(os, "geteuid") and os.geteuid() == 0:
-            cmd.insert(1, "--no-sandbox")
-        try:
-            subprocess.run(cmd, capture_output=True, timeout=90, check=False)
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            return False, f"Chrome could not render the PNG ({exc}). The receipt HTML is ready."
-    if not png.exists():
-        return False, "Chrome ran but wrote no PNG. The receipt HTML is ready."
-    w, h = png_size(png)
-    return True, f"Share card: {png} ({w}x{h})"
-
-
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Build the AI receipt from answers.json")
     ap.add_argument("answers", type=Path)
@@ -453,6 +241,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ignore", action="append", default=[], help="a word to never count as a name")
     ap.add_argument("--out", type=Path, default=Path("out"))
     ap.add_argument("--no-png", action="store_true", help="skip the PNG share card")
+    ap.add_argument("--motif", choices=MOTIFS, help="analog, cyberpunk or y2k-blog (default: style.json motif)")
     ap.add_argument("--style", type=Path, help="a style.json (default: ./style.json, then "
                     "~/.rocha-coded/style.json, then the bundled Rocha Coded example)")
     args = ap.parse_args(argv)
@@ -481,9 +270,9 @@ def main(argv: list[str] | None = None) -> int:
     style = load_style(style_path)
     out = args.out
     out.mkdir(parents=True, exist_ok=True)
-    (out / "receipt.html").write_text(render_receipt(result, meta, name, style=style), encoding="utf-8")
+    (out / "receipt.html").write_text(render_receipt(result, meta, name, style=style, motif=args.motif), encoding="utf-8")
     card = out / "receipt-card.html"
-    card.write_text(render_receipt(result, meta, name, card=True, style=style), encoding="utf-8")
+    card.write_text(render_receipt(result, meta, name, card=True, style=style, motif=args.motif), encoding="utf-8")
     (out / "fix-list.md").write_text(render_fix_list(result, meta, name), encoding="utf-8")
     summary = {k: result[k] for k in ("total", "named", "sources", "sent_instead", "lost")}
     summary["questions"] = [{k: q[k] for k in ("question", "sources", "named", "you_named")}
@@ -492,7 +281,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"Recommended {result['named']} out of {result['total']}.")
     look = "the bundled Rocha Coded example" if style_path == STYLE_EXAMPLE else str(style_path)
-    print(f"Style: {look}")
+    print(f"Style: {look} · motif: {resolve_motif(args.motif, style)}")
     print(f"Receipt: {out / 'receipt.html'}")
     print(f"Fix list: {out / 'fix-list.md'}")
     if args.no_png:

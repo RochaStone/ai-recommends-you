@@ -7,6 +7,7 @@
   --label: "Bricolage Grotesque", system-ui, "Helvetica Neue", Arial, sans-serif;
   --mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
   --scrawl: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
+  --pixel: "Silkscreen", "Pixelify Sans", ui-monospace, monospace;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -80,23 +81,23 @@ body.page { padding: 48px 16px 64px; }
 
 /* Share card: exactly 1080 x 1350 */
 body.card { width: 1080px; height: 1350px; overflow: hidden; padding: 56px 70px; }
-body.card .check { max-width: none; height: 1238px; padding: 34px 44px 28px; display: flex; flex-direction: column; }
-body.card .kicker { font-size: 17px; }
-body.card .mast h1 { font-size: 132px; }
-body.card .for { font-size: 21px; }
-body.card .boxes label { font-size: 13px; }
-body.card .boxes span { font-size: 18px; }
-body.card .lines { flex: 1; margin-top: 10px; }
-body.card .line { font-size: 19px; padding: 7px 0; grid-template-columns: 44px 1fr auto; }
-body.card .line small { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-body.card .line .you { font-size: 14px; }
-body.card .sub { font-size: 18px; }
-body.card .sub.tax span:first-child { font-size: 15px; }
-body.card .total { font-size: 24px; padding: 6px 0; }
-body.card .total b { font-size: 58px; }
-body.card .scrawl { font-size: 44px; margin-top: 10px; }
-body.card .thanks { font-size: 40px; margin-top: 0; }
-body.card .credit { font-size: 13px; }
+body.card.m-analog .check { max-width: none; height: 1238px; padding: 34px 44px 28px; display: flex; flex-direction: column; }
+body.card.m-analog .kicker { font-size: 17px; }
+body.card.m-analog .mast h1 { font-size: 132px; }
+body.card.m-analog .for { font-size: 21px; }
+body.card.m-analog .boxes label { font-size: 13px; }
+body.card.m-analog .boxes span { font-size: 18px; }
+body.card.m-analog .lines { flex: 1; margin-top: 10px; }
+body.card.m-analog .line { font-size: 19px; padding: 7px 0; grid-template-columns: 44px 1fr auto; }
+body.card.m-analog .line small { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.card.m-analog .line .you { font-size: 14px; }
+body.card.m-analog .sub { font-size: 18px; }
+body.card.m-analog .sub.tax span:first-child { font-size: 15px; }
+body.card.m-analog .total { font-size: 24px; padding: 6px 0; }
+body.card.m-analog .total b { font-size: 58px; }
+body.card.m-analog .scrawl { font-size: 44px; margin-top: 10px; }
+body.card.m-analog .thanks { font-size: 40px; margin-top: 0; }
+body.card.m-analog .credit { font-size: 13px; }
 
 @media (max-width: 560px) {
   .boxes { grid-template-columns: 1fr 1fr; }

@@ -33,7 +33,8 @@ Start from `style.example.json`: copy it to `style.json` and fill it in. Or ask 
 | `fonts.scrawl` | a handwriting or marker font | the scrawl |
 | `fonts.script` | a signature script font | no |
 | `fonts.mono` | a typewriter font | the numbers and question lines |
-| `motif` | one of `guest-check`, `front-page`, `magazine-scrawl`, `pink-paper`, `sticker-collage`, `rotary`, `leopard`, `retro-tv`, `neutral` | no, this tool is always a guest check |
+| `fonts.pixel` (optional) | a pixel font from Google Fonts | the cyberpunk and y2k-blog labels (Silkscreen if empty) |
+| `motif` | `analog`, `cyberpunk` or `y2k-blog` (older names like `guest-check` or `retro-tv` still work and map to the nearest one) | yes: the guest check, the terminal printout, or the blog window |
 | `lines.scrawl` | a short line in your own words | the handwritten line under the total |
 | `lines.masthead`, `headline`, `todo`, `stamp`, `celebrate`, `affirm`, `invite`, `magazine` | more of your own lines | kept for other tools |
 | `references` | 3 to 5 images or links that feel like you | Claude looks at these when it makes your style with you |

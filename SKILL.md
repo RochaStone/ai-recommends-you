@@ -109,7 +109,10 @@ If she has no `style.json`, offer once to make one. Never assume her taste is Ro
    match them. Take `lines.scrawl` from her own words, never from Rocha's lines.
 3. Copy `SKILL_DIR/style.example.json` to `style.json` in the working folder and fill it in. `SKILL_DIR/STYLE.md`
    explains each key.
-4. Show her one rendered sample, made from the fictional answers:
+4. Show her `SKILL_DIR/docs/img/triptych.png`, the same receipt in three motifs, and ask which feels like her:
+   analog (paper you could hold), cyberpunk (the girly terminal) or y2k-blog (the 2003 blog window). Reflect her
+   choice back and set `motif` in `style.json`.
+5. Show her one rendered sample, made from the fictional answers:
    ```sh
    python3 "$SKILL_DIR/recommend.py" "$SKILL_DIR/examples/answers.sample.json" --style style.json --out out/style-sample/
    ```
@@ -122,8 +125,8 @@ make it hers any time.
 ```sh
 python3 "$SKILL_DIR/recommend.py" out/answers.json --name "Her Brand" --out out/
 ```
-Add `--alias "Her Own Name"` for each other spelling, and `--style path/to/style.json` to point at a style file
-somewhere else. It writes:
+Add `--alias "Her Own Name"` for each other spelling, `--style path/to/style.json` to point at a style file
+somewhere else, and `--motif analog|cyberpunk|y2k-blog` if she wants a different look this time. It writes:
 - `out/receipt.html`: the Guest Check receipt. Opens in any browser.
 - `out/receipt.png`: the 1080x1350 share card (needs Chrome or Chromium; if missing, it says so and the HTML still works).
 - `out/fix-list.md`: the three things to publish so she gets named next time.

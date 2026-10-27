@@ -6,7 +6,8 @@ Everything below was run on 26 Oct 2026, on macOS with Python 3.12.8 and Google 
 ```sh
 python3 -m unittest discover -s tests -v
 ```
-Result: **22 tests, all OK.** They cover:
+Result: **29 tests, all OK.** They cover:
+- the three motifs from one function: analog (receipt header), cyberpunk (the `rocheverse:~$` prompt, block cursor, block bars 1/10 and 3/10, Silkscreen loaded), y2k-blog (`ai-receipt.exe` window, mood line, hit counter `000,777`, guestbook link); the same data in all three; every share card carries exactly one box to fit; motif choice from `--motif`, then style.json, then analog, with old names mapped; no glow or drop shadow on type in any stylesheet; the CLI `--motif` flag
 - style.json: a second palette, fonts, scrawl and owner/handle replace the bundled look; a blank scrawl prints none; bad colour and font values are not injected into the page; the fallback order (./style.json, then ~/.rocha-coded/style.json, then the bundled example); both bundled style files share the same keys; a user style borrows only missing palette and font entries, never the example's lines, owner, handle, name, references or notes
 - name extraction from bold text, list items and plain sentences, and that platforms (Google, Instagram) and sentence starts are not counted as names
 - "and" no longer glues two names together (a real bug the tests caught)
@@ -42,6 +43,12 @@ labels, no glow and no coloured shadow. Checked by eye at 1080x1350.
 A test style (teal and navy, Bodoni Moda, Oswald, IBM Plex Mono, Caveat, its own scrawl) was rendered with
 `--style`. All colours, fonts, the scrawl and the credit line changed. Its taller fonts first pushed the credit line
 off the card, so the card now shrinks the question list until everything fits. Re-rendered: it fits at 1080x1350.
+
+## 3b. Three motifs, by eye (27 Oct)
+`python3 scripts/make-readme-images.py` rendered all three share cards at 1080x1350 and the triptych at 1620x720.
+Each was opened and checked: nothing cut off, no glow. Fixes made on the way: the cyberpunk total bar picked up the
+big serif style, cyberpunk lines were stuck at 14px, and the y2k card had a gap mid-receipt. All three page versions
+were also rendered side by side at 390px wide: page width stayed 390 in each, so no sideways scroll.
 
 ## 4. Security gate
 ```sh
