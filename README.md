@@ -12,9 +12,45 @@ It writes down who gets named.
 Then it hands you a receipt: recommended x out of 10.
 Plus the three things to publish so you get named next time.
 
-<p align="center"><img src="examples/receipt.sample.png" width="540" alt="A pink guest check titled AI RECEIPT. Ten buyer questions, each marked YOU: NAMED or YOU: NOT NAMED, with a total of recommended 3/10 and a red marker scrawl that says build your founder world."></p>
+<p align="center"><img src="examples/receipt.sample.png" width="540" alt="A blush pink guest check on a plum background, titled AI RECEIPT. Ten buyer questions, each marked YOU: NAMED or YOU: NOT NAMED, with a total of recommended 3/10 and a magenta marker scrawl that says build your founder world."></p>
 
 <p align="center"><sub>A sample receipt for a made-up pottery retreat in a made-up town. Every name on it is fictional.</sub></p>
+
+## Start here
+You can do this. Each step tells you what to type and what you will see when it worked.
+
+**If you use Claude Code** (Claude in the terminal, the window where you type commands to your computer):
+
+1. Open the Terminal app. On a Mac it is in Applications > Utilities > Terminal.
+   This checks that Python, the language the tool is written in, is ready:
+   ```sh
+   python3 --version
+   ```
+   You will see `Python 3.10` or a higher number.
+2. This copies the tool onto your computer. "Clone" means download a copy from GitHub, the site where the code lives:
+   ```sh
+   git clone https://github.com/RochaStone/ai-recommends-you ~/.claude/skills/ai-recommends-you
+   ```
+   You will see `Cloning into...` and then the line where you type comes back.
+3. This makes a folder for your receipts and opens Claude Code inside it:
+   ```sh
+   mkdir -p ~/ai-receipt && cd ~/ai-receipt && claude
+   ```
+   You will see Claude Code open and wait for you.
+4. Type this to Claude, in your own words if you like:
+   ```
+   Is ChatGPT recommending me?
+   ```
+   You will see Claude ask your first question, about your niche. It asks one thing at a time.
+5. When Claude says your receipt is ready, this opens it in your browser:
+   ```sh
+   open out/receipt.html
+   ```
+   You will see your pink receipt with your total at the bottom.
+
+**If you use Claude Cowork** (the Claude desktop app): download the zip (one file that holds the whole tool),
+upload it in Customize > Skills, give a task your receipts folder, and say "Make me the AI receipt."
+The full steps are under [Claude Cowork](#claude-cowork).
 
 ## What you get
 - **The receipt.** A pink Guest Check with every question, who got named, and YOU: NAMED or NOT NAMED. It opens in any browser.
@@ -64,17 +100,23 @@ Then it asks the assistants, in the first of these modes that works for you.
 | Mode | What it asks | What you need |
 |---|---|---|
 | **Browser** (best) | the real ChatGPT and Perplexity, in your own Chrome | the Claude in Chrome extension, and you already logged in to chatgpt.com and perplexity.ai |
-| **API** | ChatGPT and Perplexity through their developer APIs | your own `OPENAI_API_KEY` and/or `PERPLEXITY_API_KEY`, plus the current model name for each |
+| **API** | ChatGPT and Perplexity through their developer APIs (the doors companies open for programs) | your own `OPENAI_API_KEY` and/or `PERPLEXITY_API_KEY`, plus the current model name for each |
 | **Self** | Claude itself, answering as it would for a stranger (with web search when it has it) | nothing |
 | **Paste** | whatever you ask by hand | ten minutes and copy-paste |
 
 Straight talk on each one:
 - **Browser mode** is the closest to what your buyer sees. It uses a Temporary Chat in ChatGPT so your own history doesn't tip the answer your way. It never logs in, types a password or signs up for you. If the extension isn't connected, Claude says so and moves on.
-- **API mode** asks the same companies, but API answers are not identical to the apps. The receipt labels them "ChatGPT (API)" and "Perplexity (API)" so you always know. Copy `.env.example` to `.env` and paste your keys there yourself, with the current model name from each company's docs in `OPENAI_MODEL` and `PERPLEXITY_MODEL`. Models change often, so the tool never guesses one for you. Never paste a key into the chat.
+- **API mode** asks the same companies. An API key is a private password a company gives you so a program can use its service, and it can cost a few cents a run, but API answers are not identical to the apps. The receipt labels them "ChatGPT (API)" and "Perplexity (API)" so you always know. Copy `.env.example` to `.env` (a small private settings file that stays on your computer and is never shared) and paste your keys there yourself, with the current model name from each company's docs in `OPENAI_MODEL` and `PERPLEXITY_MODEL`. Models change often, so the tool never guesses one for you. Never paste a key into the chat.
 - **Self mode** is Claude's own answer, labelled as Claude. Useful on its own, and honest about what it is.
 - **Paste mode** is for when you'd rather do it by hand. Claude gives you the ten questions, you paste back what each app said.
 
 AI answers change from day to day. This is a snapshot of today, not a ranking.
+
+## If it goes wrong
+This happens to everyone the first time. Here are the three most common moments and the fix for each.
+- **The terminal says `command not found` for `python3` or `git`.** Your Mac may offer to install its developer tools. Click Install, wait for it to finish, and run the step again. If nothing pops up, install Python from python.org.
+- **Claude says "No Chrome or Chromium found, so no PNG."** Your receipt page and fix list are ready. Install Google Chrome for the picture, or open `out/receipt.html` in your browser and take a screenshot.
+- **ChatGPT or Perplexity asks you to log in.** Log in yourself in Chrome, then tell Claude "ready". Claude never types a password for you. You can also say "use self mode" or "I'll paste the answers" and carry on.
 
 ## Make it yours
 Your look lives in one file, `style.json`: your colours, fonts, your own scrawl line, and your name and handle on the receipt.

@@ -12,8 +12,19 @@ never pad the score, and never claim a source you did not ask.
 `SKILL_DIR` below means the folder this file lives in. Write all output to `out/` inside the user's working folder
 (in Cowork, the folder she shared), never inside `SKILL_DIR`.
 
+## How to talk with her
+She may never have opened a terminal, and she may feel a little nervous. Be warm, certain and kind. Never say
+"simply" or "just". In every step:
+- Ask one question at a time and wait for the answer.
+- Reflect the answer back in one sentence ("Got it: pottery retreats for burnt-out lawyers, in Port Halcyon.").
+- Say what you are about to do before you do it.
+- End each step by telling her what happens next or what she can do now.
+- If she needs to type anything herself (a login, a key in `.env`), tell her exactly what to type, where, and what
+  she will see when it worked.
+- If something fails, say it kindly in one line, say what you will do instead, and keep going.
+
 ## 1. Collect the brief
-Ask in one short message, then wait:
+Ask these one at a time. After each answer, reflect it back in one sentence, then ask the next:
 1. Her niche, in her buyer's words (for example "pottery retreats for burnt-out lawyers").
 2. Where she is, or "online" if location does not matter.
 3. What she sells (the main offer, one line).
@@ -29,14 +40,16 @@ Plain buyer language, the way a person types into ChatGPT. No marketing words. M
 - one gift or referral question ("best gift for a [buyer]", "who do you recommend for ...")
 - one question with no location, if she sells online too
 
-Show her the ten and let her swap any. Then save `out/questions.json`:
+Tell her you are writing the questions her buyer would type. Show her the ten as a numbered list and ask:
+"Want to swap any? Tell me the number and the new question, or say looks good." Then save `out/questions.json`:
 ```json
 {"meta": {"name": "", "aliases": [], "niche": "", "location": "", "offer": "", "competitors": [], "date": "YYYY-MM-DD"},
  "questions": ["...ten strings..."]}
 ```
 
 ## 3. Ask the assistants
-Use the first mode that works. You can combine modes; every answer records its own `source`.
+Before you start, tell her which mode you are using and why in one sentence, and roughly how long it takes
+(about one minute per question per assistant). Use the first mode that works. You can combine modes; every answer records its own `source`.
 
 ### Browser mode (best: the real ChatGPT and Perplexity she would see)
 Needs the Claude in Chrome extension connected, and her already logged in to chatgpt.com and perplexity.ai.
@@ -90,8 +103,8 @@ every Rocha Coded tool. The tool looks for `style.json` in the working folder, t
 uses the bundled example (`SKILL_DIR/examples/style.rocha-coded.json`, Rocha's own look).
 
 If she has no `style.json`, offer once to make one. Never assume her taste is Rocha's.
-1. Ask for 3 to 5 references (screenshots, links, a Pinterest board), her palette if she has one, and the words she
-   says a lot.
+1. Ask one at a time, reflecting each answer back: 3 to 5 references (screenshots, links, a Pinterest board), then her
+   palette if she has one, then the words she says a lot.
 2. Look at every reference (open images, fetch links). Pick a palette as hex codes and fonts from Google Fonts that
    match them. Take `lines.scrawl` from her own words, never from Rocha's lines.
 3. Copy `SKILL_DIR/style.example.json` to `style.json` in the working folder and fill it in. `SKILL_DIR/STYLE.md`
@@ -117,6 +130,9 @@ somewhere else. It writes:
 - `out/summary.json`: the numbers.
 
 ## 7. Hand it over
+Tell her the receipt is ready, then open it for her if you can. If she has to open it herself, tell her to type
+`open out/receipt.html` in the terminal (on Windows, double-click the file in the out folder) and that she will see the
+receipt in her browser.
 Tell her the total in one line ("ChatGPT and Perplexity recommended you 3 out of 10 times"), who they sent her
 buyer to instead, and the first fix. Open the receipt for her if you can. Remind her to run it again in four to six
 weeks with the same questions.
