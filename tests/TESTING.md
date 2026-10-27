@@ -33,6 +33,11 @@ The PNG was opened and checked by eye: fonts loaded, all ten lines, the total, t
 The page receipt was also rendered at 390px wide (inside an iframe, since headless Chrome on macOS will not size a
 window under 500px): no sideways scroll, lines stack, NAMED tags wrap under each question.
 
+## 2b. The v2 look (27 Oct)
+The sample was re-rendered in the current house look: plum ground, blush paper, Fraunces 900 wine masthead,
+candy NAMED pills, ink-outlined NOT NAMED pills, Permanent Marker magenta scrawl, DM Mono lines, Bricolage Grotesque
+labels, no glow and no coloured shadow. Checked by eye at 1080x1350.
+
 ## 3. A second style, by eye
 A test style (teal and navy, Bodoni Moda, Oswald, IBM Plex Mono, Caveat, its own scrawl) was rendered with
 `--style`. All colours, fonts, the scrawl and the credit line changed. Its taller fonts first pushed the credit line

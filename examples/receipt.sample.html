@@ -4,23 +4,21 @@
 <title>AI Receipt for Hush Hour Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<style>/* AI Receipt: Guest Check motif. Defaults are the bundled example; style.json overrides the :root variables. */
+<style>/* AI Receipt: Guest Check on blush paper over a plum ground.
+   Defaults are the bundled example; style.json overrides the :root variables. */
 :root {
-  --hot: #FF2D8A; --candy: #FFB3D1; --paper: #FFE1EC; --cream: #F6EFE4;
-  --ink: #111111; --red: #E0202E; --plum: #4A1033; --gold: #D4A64A; --white: #FFFFFF;
-  --serif: "Playfair Display", "Didot", "Bodoni 72", Georgia, serif;
-  --cond: "Archivo Narrow", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
-  --mono: "Courier Prime", "Courier New", Courier, monospace;
-  --marker: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
+  --ground: #50163C; --wine: #682047; --ink: #3B1230; --cream: #FFF7F4; --paper: #FFE3F1;
+  --candy: #FE9DCA; --marker: #C2246E; --plum: #50163C; --gold: #E9B949;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --label: "Bricolage Grotesque", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  --scrawl: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  background-color: var(--cream);
-  background-image:
-    radial-gradient(color-mix(in srgb, var(--plum) 5%, transparent) 1px, transparent 1px),
-    radial-gradient(color-mix(in srgb, var(--plum) 4%, transparent) 1px, transparent 1px);
-  background-size: 7px 7px, 11px 11px;
-  background-position: 0 0, 3px 5px;
+  background-color: var(--ground);
+  background-image: radial-gradient(color-mix(in srgb, var(--cream) 5%, transparent) 1px, transparent 1px);
+  background-size: 6px 6px;
   color: var(--ink);
   font-family: var(--mono);
 }
@@ -31,76 +29,77 @@ body.page { padding: 48px 16px 64px; }
   margin: 0 auto;
   max-width: 760px;
   background-color: var(--paper);
-  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 37px, color-mix(in srgb, var(--hot) 28%, transparent) 37px, color-mix(in srgb, var(--hot) 28%, transparent) 38px);
-  border: 2px solid var(--hot);
-  box-shadow: 0 2px 0 rgba(0,0,0,.04), 0 18px 40px color-mix(in srgb, var(--plum) 22%, transparent), 0 4px 10px color-mix(in srgb, var(--plum) 12%, transparent);
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 37px,
+    color-mix(in srgb, var(--ink) 12%, transparent) 37px, color-mix(in srgb, var(--ink) 12%, transparent) 38px);
+  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 16px 34px rgba(0,0,0,.35); /* a print on a desk, neutral only */
   transform: rotate(-.6deg);
   padding: 28px 30px 26px;
 }
-.check::before { /* torn top edge */
-  content: ""; position: absolute; left: -2px; right: -2px; top: -10px; height: 12px;
-  background: linear-gradient(-45deg, var(--paper) 6px, transparent 0) 0 6px / 12px 12px repeat-x,
-              linear-gradient(45deg, var(--paper) 6px, transparent 0) 0 6px / 12px 12px repeat-x;
-}
 
-.mast { text-align: center; border-bottom: 3px double var(--hot); padding-bottom: 12px; }
-.kicker { font-family: var(--cond); font-weight: 700; letter-spacing: .22em; font-size: 13px; color: var(--plum); }
+.mast { text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; }
+.kicker { font-family: var(--label); font-weight: 800; letter-spacing: .16em; font-size: 12px; color: var(--wine); text-transform: uppercase; }
 .mast h1 {
-  font-family: var(--serif); font-weight: 900; color: var(--hot);
-  font-size: clamp(44px, 11vw, 92px); line-height: .9; letter-spacing: -.01em; margin: 6px 0 4px;
-  text-shadow: 2px 2px 0 color-mix(in srgb, var(--plum) 12%, transparent);
+  font-family: var(--serif); font-weight: 900; color: var(--wine);
+  font-size: clamp(44px, 11vw, 92px); line-height: .9; letter-spacing: -.02em; margin: 8px 0 6px;
 }
-.for { font-family: var(--cond); font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--plum); }
-.for b { color: var(--ink); }
+.for { font-family: var(--label); font-size: 15px; color: var(--ink); }
+.for b { font-weight: 800; }
 
-.boxes { display: grid; grid-template-columns: 1.1fr 1.6fr .8fr .9fr; border: 2px solid var(--hot); border-top: 0; background: var(--white); }
-.boxes div { padding: 6px 8px; border-right: 1px solid var(--candy); min-width: 0; }
+.boxes { display: grid; grid-template-columns: 1.1fr 1.6fr .8fr .9fr; border: 1.5px solid var(--ink); border-top: 0; background: var(--cream); }
+.boxes div { padding: 6px 8px; border-right: 1px solid color-mix(in srgb, var(--ink) 25%, transparent); min-width: 0; }
 .boxes div:last-child { border-right: 0; }
-.boxes label { display: block; font-family: var(--cond); font-weight: 700; font-size: 10px; letter-spacing: .18em; color: var(--hot); }
+.boxes label { display: block; font-family: var(--label); font-weight: 800; font-size: 10px; letter-spacing: .14em; color: var(--wine); text-transform: uppercase; }
 .boxes span { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .lines { list-style: none; margin: 10px 0 0; }
-.line { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; padding: 7px 0; border-bottom: 1px dashed color-mix(in srgb, var(--plum) 25%, transparent); font-size: 14px; }
-.line .n { color: var(--hot); font-weight: 700; }
+.line { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; padding: 7px 0; border-bottom: 1px dashed color-mix(in srgb, var(--ink) 28%, transparent); font-size: 14px; }
+.line .n { color: var(--wine); font-weight: 500; }
 .line .q { min-width: 0; }
-.line small { display: block; color: var(--plum); opacity: .8; font-size: 12px; margin-top: 2px; }
-.line .you { font-family: var(--cond); font-weight: 700; font-size: 12px; letter-spacing: .1em; padding: 2px 7px; border: 1.5px solid var(--ink); white-space: nowrap; align-self: center; }
-.line.hit .you { background: var(--hot); color: var(--white); border-color: var(--hot); }
+.line small { display: block; color: var(--ink); opacity: .72; font-size: 12px; margin-top: 2px; }
+.line .you {
+  font-family: var(--label); font-weight: 800; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 10px; border: 1.5px solid var(--ink); border-radius: 999px; color: var(--ink); background: transparent;
+  white-space: nowrap; align-self: center;
+}
+.line.hit .you { background: var(--candy); border-color: var(--candy); color: var(--ink); }
 
 .foot { margin-top: 12px; }
 .sub { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 2px 0; }
-.sub.tax { color: var(--plum); }
+.sub.tax span:first-child { font-family: var(--label); font-weight: 800; font-size: 12px; letter-spacing: .12em; color: var(--wine); align-self: center; }
 .sub.tax span:last-child { text-align: right; }
 .total {
   display: flex; justify-content: space-between; align-items: baseline;
   border-top: 3px double var(--ink); border-bottom: 3px double var(--ink);
-  margin-top: 8px; padding: 8px 0; font-family: var(--cond); font-weight: 700; letter-spacing: .08em; font-size: 20px;
+  margin-top: 8px; padding: 8px 0; font-family: var(--label); font-weight: 800; font-size: 18px;
 }
-.total b { font-family: var(--serif); font-size: 40px; color: var(--hot); letter-spacing: 0; }
+.total > span:first-child { letter-spacing: .14em; }
+.total b { font-family: var(--serif); font-weight: 900; font-size: 42px; color: var(--wine); }
 .scrawl {
-  font-family: var(--marker); color: var(--red); font-size: 30px; line-height: 1.1;
+  font-family: var(--scrawl); color: var(--marker); font-size: 30px; line-height: 1.1;
   transform: rotate(-4deg); margin: 18px 0 4px 6px; display: inline-block; position: relative;
 }
 .scrawl svg { display: block; width: 100%; height: 14px; }
-.scrawl path { fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round; }
-.thanks { text-align: center; font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 34px; color: var(--hot); margin-top: 6px; }
-.credit { text-align: center; font-family: var(--cond); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--plum); margin-top: 4px; }
+.scrawl path { fill: none; stroke: var(--marker); stroke-width: 4; stroke-linecap: round; }
+.thanks { text-align: center; font-family: var(--serif); font-style: italic; font-weight: 900; font-size: 34px; color: var(--wine); margin-top: 6px; }
+.credit { text-align: center; font-family: var(--label); font-weight: 600; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); opacity: .75; margin-top: 4px; }
 
 /* Share card: exactly 1080 x 1350 */
 body.card { width: 1080px; height: 1350px; overflow: hidden; padding: 56px 70px; }
 body.card .check { max-width: none; height: 1238px; padding: 34px 44px 28px; display: flex; flex-direction: column; }
-body.card .kicker { font-size: 18px; }
+body.card .kicker { font-size: 17px; }
 body.card .mast h1 { font-size: 132px; }
-body.card .for { font-size: 20px; }
+body.card .for { font-size: 21px; }
 body.card .boxes label { font-size: 13px; }
 body.card .boxes span { font-size: 18px; }
 body.card .lines { flex: 1; margin-top: 10px; }
 body.card .line { font-size: 19px; padding: 7px 0; grid-template-columns: 44px 1fr auto; }
 body.card .line small { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-body.card .line .you { font-size: 15px; }
+body.card .line .you { font-size: 14px; }
 body.card .sub { font-size: 18px; }
-body.card .total { font-size: 26px; padding: 6px 0; }
-body.card .total b { font-size: 56px; }
+body.card .sub.tax span:first-child { font-size: 15px; }
+body.card .total { font-size: 24px; padding: 6px 0; }
+body.card .total b { font-size: 58px; }
 body.card .scrawl { font-size: 44px; margin-top: 10px; }
 body.card .thanks { font-size: 40px; margin-top: 0; }
 body.card .credit { font-size: 13px; }
@@ -113,14 +112,14 @@ body.card .credit { font-size: 13px; }
   .check { padding: 22px 16px; transform: none; }
 }
 </style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,900;1,400;1,900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap">
-<style>:root { --hot: #FF2D8A; --candy: #FFB3D1; --paper: #FFE1EC; --cream: #F6EFE4; --ink: #111111; --red: #E0202E; --plum: #4A1033; --gold: #D4A64A; --serif: "Playfair Display", Didot, Georgia, serif; --cond: "Archivo Narrow", "Arial Narrow", "Helvetica Neue", Arial, sans-serif; --mono: "Courier Prime", "Courier New", Courier, monospace; --marker: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive; }</style></head>
+<style>:root { --ground: #50163C; --wine: #682047; --candy: #FE9DCA; --paper: #FFE3F1; --cream: #FFF7F4; --ink: #3B1230; --marker: #C2246E; --plum: #50163C; --gold: #E9B949; --serif: "Fraunces", Georgia, "Times New Roman", serif; --label: "Bricolage Grotesque", system-ui, "Helvetica Neue", Arial, sans-serif; --mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace; --scrawl: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive; }</style></head>
 <body class="page">
 <main class="check" aria-label="AI receipt">
   <header class="mast">

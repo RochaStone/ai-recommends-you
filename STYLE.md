@@ -17,23 +17,25 @@ Start from `style.example.json`: copy it to `style.json` and fill it in. Or ask 
 | `owner` | your name, as you sign things | yes, printed at the foot of the receipt |
 | `handle` | your Instagram or main social handle, with the @ | yes, next to your name |
 | `site` | your website address | no |
-| `palette.hero` | your loudest colour, as a hex code like `#FF2D8A` | the masthead, totals and NAMED tags |
-| `palette.accent` | a softer partner to the hero | the dividers in the info boxes |
-| `palette.paper` | the background the receipt sits on | yes |
+| `palette.hero` | your ground colour, the deep one everything sits on, as a hex code like `#50163C` | the page behind the receipt (never a fill) |
+| `palette.wine` | a second deep colour for headlines | the AI RECEIPT title, numbers, labels, the total and THANK YOU! |
+| `palette.accent` | your one bright accent | the NAMED pills |
+| `palette.paper` | a light paper colour | the info boxes |
 | `palette.paper_pink` | the receipt paper itself | yes |
-| `palette.ink` | your text colour | yes |
+| `palette.ink` | your text colour | the receipt text, rules and NOT NAMED outlines |
 | `palette.marker` | the colour of the handwritten scrawl | yes |
-| `palette.plum` | a deep shade for small print | yes |
-| `palette.gold` | a highlight colour | kept for other tools |
+| `palette.plum` | a deep shade | kept for other tools |
+| `palette.gold` | a highlight colour for thin rules | the rule under the title |
 | `palette.cool` | one cool accent, used rarely | no |
-| `fonts.masthead` | a big display font from Google Fonts | the AI RECEIPT title and THANK YOU! |
-| `fonts.label` | a narrow font for labels | the small caps labels |
+| `fonts.masthead` | a big display font from Google Fonts | the AI RECEIPT title, the total and THANK YOU! |
+| `fonts.label` | a font for labels and small print | the labels, pills and your name line |
 | `fonts.body` | a reading font | no (the receipt prints in mono) |
 | `fonts.scrawl` | a handwriting or marker font | the scrawl |
-| `fonts.mono` | a typewriter font | the receipt lines |
+| `fonts.script` | a signature script font | no |
+| `fonts.mono` | a typewriter font | the numbers and question lines |
 | `motif` | one of `guest-check`, `front-page`, `magazine-scrawl`, `pink-paper`, `sticker-collage`, `rotary`, `leopard`, `retro-tv`, `neutral` | no, this tool is always a guest check |
 | `lines.scrawl` | a short line in your own words | the handwritten line under the total |
-| `lines.masthead`, `headline`, `todo`, `stamp`, `celebrate`, `affirm` | more of your own lines | kept for other tools |
+| `lines.masthead`, `headline`, `todo`, `stamp`, `celebrate`, `affirm`, `invite`, `magazine` | more of your own lines | kept for other tools |
 | `references` | 3 to 5 images or links that feel like you | Claude looks at these when it makes your style with you |
 | `notes` | your look in one or two sentences | Claude reads this too |
 

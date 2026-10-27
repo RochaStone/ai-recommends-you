@@ -33,15 +33,15 @@ CARD_W, CARD_H = 1080, 1350
 STYLE_EXAMPLE = HERE / "examples" / "style.rocha-coded.json"
 COLOUR = re.compile(r"^#[0-9A-Fa-f]{3,8}$")
 FONT_NAME = re.compile(r"^[A-Za-z0-9 ]{1,40}$")
-# style.json palette key -> CSS variable in assets/receipt.css
-PALETTE_VARS = {"hero": "--hot", "accent": "--candy", "paper_pink": "--paper", "paper": "--cream",
-                "ink": "--ink", "marker": "--red", "plum": "--plum", "gold": "--gold"}
+# style.json palette key -> CSS variable in assets/receipt.css. hero is the GROUND (page behind the card), never a fill.
+PALETTE_VARS = {"hero": "--ground", "wine": "--wine", "accent": "--candy", "paper_pink": "--paper",
+                "paper": "--cream", "ink": "--ink", "marker": "--marker", "plum": "--plum", "gold": "--gold"}
 # style.json font key -> (CSS variable, system fallback stack, Google Fonts axes or "")
 FONT_VARS = {
-    "masthead": ("--serif", "Didot, Georgia, serif", "ital,wght@0,400;0,700;0,900;1,400;1,700"),
-    "label": ("--cond", '"Arial Narrow", "Helvetica Neue", Arial, sans-serif', "wght@400;700"),
-    "mono": ("--mono", '"Courier New", Courier, monospace', "wght@400;700"),
-    "scrawl": ("--marker", '"Marker Felt", "Comic Sans MS", cursive', ""),
+    "masthead": ("--serif", 'Georgia, "Times New Roman", serif', "ital,wght@0,400;0,900;1,400;1,900"),
+    "label": ("--label", 'system-ui, "Helvetica Neue", Arial, sans-serif', "wght@400;600;800"),
+    "mono": ("--mono", "ui-monospace, Menlo, Consolas, monospace", "wght@400;500"),
+    "scrawl": ("--scrawl", '"Marker Felt", "Comic Sans MS", cursive', ""),
 }
 
 # Words that start capitalised phrases without being part of a name.

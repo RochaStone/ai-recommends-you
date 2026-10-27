@@ -4,22 +4,24 @@
   "handle": "@rocheverse",
   "site": "https://thrivingera.com",
   "palette": {
-    "hero": "#FF2D8A",
-    "accent": "#FFB3D1",
-    "paper": "#F6EFE4",
-    "paper_pink": "#FFE1EC",
-    "ink": "#111111",
-    "marker": "#E0202E",
-    "plum": "#4A1033",
-    "gold": "#D4A64A",
-    "cool": "#BFD4EA"
+    "hero": "#50163C",
+    "accent": "#FE9DCA",
+    "paper": "#FFF7F4",
+    "paper_pink": "#FFE3F1",
+    "ink": "#3B1230",
+    "marker": "#C2246E",
+    "plum": "#50163C",
+    "wine": "#682047",
+    "gold": "#E9B949",
+    "cool": "#B9B3F5"
   },
   "fonts": {
-    "masthead": "Playfair Display",
-    "label": "Archivo Narrow",
-    "body": "Newsreader",
+    "masthead": "Fraunces",
+    "label": "Bricolage Grotesque",
+    "body": "Fraunces",
     "scrawl": "Permanent Marker",
-    "mono": "Courier Prime"
+    "script": "Pinyon Script",
+    "mono": "DM Mono"
   },
   "motif": "guest-check",
   "lines": {
@@ -34,5 +36,5 @@
     "magazine": "ROCHEVERSE"
   },
   "references": [],
-  "notes": "Hot-girl editorial. Pink on paper and ink. Ephemera you could hold."
+  "notes": "Editorial and certain, leaning dark. Plum, cream, blush, gold. Ephemera you could hold."
 }

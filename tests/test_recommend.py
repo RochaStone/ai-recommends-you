@@ -166,16 +166,19 @@ class TestStyle(unittest.TestCase):
     def test_second_palette_changes_colours_and_scrawl(self):
         rocha = recommend.render_receipt(self.result, self.meta, "Hush Hour Studio")
         other = {"owner": "Wren", "handle": "@wrenmakes",
-                 "palette": {"hero": "#0A7E8C", "paper_pink": "#E8F4F1", "marker": "#1B3A6B"},
+                 "palette": {"hero": "#0A2F35", "wine": "#0A7E8C", "paper_pink": "#E8F4F1", "marker": "#1B3A6B"},
                  "fonts": {"masthead": "Bodoni Moda"}, "lines": {"scrawl": "slow hands, full kilns"}}
         page = recommend.render_receipt(self.result, self.meta, "Hush Hour Studio", style=other)
         override = lambda html: html.split("<style>:root {")[-1].split("</style>")[0]
-        self.assertIn("--hot: #FF2D8A;", override(rocha))
+        self.assertIn("--ground: #50163C;", override(rocha))
+        self.assertIn("--wine: #682047;", override(rocha))
         self.assertIn("build your founder world", rocha)
-        self.assertIn("--hot: #0A7E8C;", override(page))
+        self.assertIn("--ground: #0A2F35;", override(page))
+        self.assertIn("--wine: #0A7E8C;", override(page))
         self.assertIn("--paper: #E8F4F1;", override(page))
-        self.assertIn("--red: #1B3A6B;", override(page))
-        self.assertNotIn("#FF2D8A", override(page))
+        self.assertIn("--marker: #1B3A6B;", override(page))
+        self.assertNotIn("#50163C", override(page))
+        self.assertNotIn("#682047", override(page))
         self.assertIn('--serif: "Bodoni Moda"', page)
         self.assertIn("family=Bodoni+Moda", page)
         self.assertIn("slow hands, full kilns", page)
