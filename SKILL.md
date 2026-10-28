@@ -1,6 +1,6 @@
 ---
 name: ai-recommends-you
-description: Find out whether ChatGPT, Perplexity and Claude recommend her business when a buyer asks. Asks the ten questions her dream client would ask, records who gets named, and hands back a pink Guest Check receipt (recommended x/10), a 1080x1350 share card and a three-step fix list. Use when someone says "is chatgpt recommending me", "does AI recommend my business", "ai recommendation audit", "who does ai recommend", "am I showing up in ChatGPT", "AI visibility check", or "make me the AI receipt".
+description: Find out whether ChatGPT, Perplexity and Claude recommend her business when a buyer asks. Asks the ten questions her dream client would ask, records who gets named, and hands back a pink Guest Check receipt (recommended x/10), a 1080x1350 share card and a three-step fix list, then walks her through five free fixes that close the gap (a clear entity page, direct answers, a mentions plan, llms.txt, and a 30-day re-run with the delta). Use when someone says "is chatgpt recommending me", "does AI recommend my business", "ai recommendation audit", "who does ai recommend", "am I showing up in ChatGPT", "AI visibility check", "make me the AI receipt", "help me get recommended by ChatGPT", "fix my AI visibility", or "run my AI receipt again".
 ---
 
 # AI Recommends You
@@ -137,8 +137,109 @@ Tell her the receipt is ready, then open it for her if you can. If she has to op
 `open out/receipt.html` in the terminal (on Windows, double-click the file in the out folder) and that she will see the
 receipt in her browser.
 Tell her the total in one line ("ChatGPT and Perplexity recommended you 3 out of 10 times"), who they sent her
-buyer to instead, and the first fix. Open the receipt for her if you can. Remind her to run it again in four to six
-weeks with the same questions.
+buyer to instead, and the first fix. Then offer the five free fixes (step 8).
+
+## 8. Then what: the five free fixes
+After the receipt, say: "The receipt tells you the gap. These five free fixes close it. Want to do them now?
+It takes about half an hour, and I ask one thing at a time." If she says later, tell her she can say
+"do my five free fixes" any time. If yes, go fix by fix. Before each fix, say what you are about to make and
+why in one sentence. After each, show her the file, say where it is, and what she can do with it.
+
+### The interview (once, for fixes 1, 2 and 4)
+Ask one at a time, in this order. Reflect each answer back in one sentence. Keep HER words exactly;
+never polish them into marketing language, never borrow Rocha's lines.
+1. Who are you? Your brand name, and your own name if people book you by name.
+2. What do you do, in one sentence, the way you would say it to a friend?
+3. Who is it for?
+4. Where are you, or "online"?
+5. What is the main thing people buy from you?
+6. What is your proof? A number you can show, a result, a review in a client's words. Only things that are true and public.
+7. How does someone work with you? The steps, and your booking link if you have one.
+8. Your website address, and your other profiles (Instagram, Substack, LinkedIn). These go in `same_as`.
+9. Then, for each question she LOST on the receipt (from `out/summary.json` "lost"): "Your buyer asked: '[question]'.
+   How would you answer her, in two or three sentences?" If she says "you write it", leave it out; the tool
+   makes a draft from her facts and marks it DRAFT.
+
+Save `out/entity.json` (the sample is `SKILL_DIR/examples/entity.sample.json`; `kind` is `Organization` for a brand,
+`Person` if she trades under her own name):
+```json
+{"name": "", "person": "", "kind": "Organization", "site": "https://", "one_line": "", "what": "", "for_whom": "",
+ "where": "", "offer": "", "proof": [""], "work_with": "", "book_url": "", "same_as": [""],
+ "faq": [{"q": "", "a": ""}], "answers": {"the lost question, exactly": "her answer, in her words"}}
+```
+
+### Fix 1: one clear page
+"I am making one page that says exactly who you are, for whom and where, in your words, with the hidden label
+the assistants read."
+```sh
+python3 "$SKILL_DIR/solutions/entity_page.py" out/entity.json --out out/
+```
+She will see three files in `out/entity/`: `index.html` (the page in her motif), `index.md` (the words to paste)
+and `DEPLOY.md` (where to put it: her website, Substack About, or GitHub Pages). Open `index.html` for her.
+Read her the three paths from `DEPLOY.md` and ask which one she uses. Walk her through only that one.
+
+### Fix 2: answer the questions you lost
+"I am writing a short, direct answer for every question you were not named on, so the assistants have your
+answer to lift."
+```sh
+python3 "$SKILL_DIR/solutions/answers.py" out/summary.json out/entity.json --out out/
+```
+She will see one file per lost question in `out/answers/`, plus `index.html` (all of them on one FAQ page) and
+`faq.json`. Tell her how many are DRAFTS and ask her to read each draft aloud and change any word that is not hers.
+Rewrite a draft with her when she asks. Then she pastes them onto her site as an FAQ page.
+If she has installed egeo (an optional free tool: `pip install egeo`), each answer also runs through its rewrite
+and the reports land in `out/answers/egeo/`. egeo needs its own model key; never ask her to paste it into the chat.
+Without egeo nothing is missing. Do not install it for her unless she asks.
+For the curious: `python3 "$SKILL_DIR/solutions/to_gaps.py" out/answers.json --out out/gaps.json` writes the gaps
+file egeo's `fix-gaps` command reads. That command also needs her own `project.yaml`; point her to egeo's docs for it.
+
+### Fix 3: get mentioned on other people's pages
+Ask: "What is your niche, in the words your buyer would use?" Reflect it back.
+If you have web search: say "I am looking for real directories, podcasts and communities in your niche." Search,
+open each result, and keep only places that exist, take submissions or guests, and fit her buyer. Up to ten.
+Never invent a name, a link or a host. Save `out/mentions.json`:
+```json
+{"niche": "", "places": [{"name": "", "url": "https://", "kind": "directory|podcast|community|press",
+  "why": "one line", "found_via": "the search you ran or the page it came from"}]}
+```
+```sh
+python3 "$SKILL_DIR/solutions/mentions.py" out/entity.json --places out/mentions.json --out out/
+```
+If you have no web search, say so in one line and run it without places:
+```sh
+python3 "$SKILL_DIR/solutions/mentions.py" out/entity.json --niche "her niche" --out out/
+```
+She will see `out/mentions-plan.md`: the places (or a checklist of searches to type), a three-line pitch in her
+words for each kind, and the hand-off to the Podcast Outreach Engine kit for the podcasts. Ask her to pick three.
+Never send a pitch for her.
+
+### Fix 4: llms.txt
+"I am writing a short file the assistants read first, plus a note on letting their robots into your site."
+```sh
+python3 "$SKILL_DIR/solutions/llms.py" out/entity.json --out out/
+```
+She will see `out/llms/llms.txt`, `out/llms/llms-full.txt` and `out/llms/AI-CRAWLERS.md`. Read her the crawler note
+in plain words: if her `robots.txt` (a note to visiting robots) blocks the search robots, the assistants cannot read her.
+Run fix 2 before this one so the answers are included.
+
+### Fix 5: run it again in 30 days
+"Every receipt keeps a dated copy of your numbers. In 30 days we ask the same questions and compare."
+Tell her the file name in `out/history/` and to come back and say "run my AI receipt again". When she does, reuse
+`out/questions.json`, ask the assistants again, and build with the compare:
+```sh
+python3 "$SKILL_DIR/recommend.py" out/answers.json --out out/ --compare out/history/summary-YYYY-MM-DD.json
+```
+She will see "last month 3/10, today 5/10" printed and on the receipt. Tell her which questions moved.
+`SKILL_DIR/solutions/RERUN.md` has the details.
+
+### Close
+Say one line, true and plain: consistency across every surface is the real lever, the same name, the same line and
+the same links everywhere. She can do this alone with these files, or with Rocha. No pitch beyond that line.
+
+### In Cowork
+Everything above works in a Cowork task with code execution on. The files land in the folder she shared.
+Web search for fix 3 depends on her Cowork settings; without it she gets the checklist. egeo is optional and is
+usually not installed in the Cowork sandbox, which is fine.
 
 ## Rules
 - Record what the assistants said. Never improve, soften or guess an answer.

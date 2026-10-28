@@ -9,11 +9,14 @@ named for each buyer question, scores how often YOU were named, and writes:
   out/summary.json   the numbers, for the agent to read back
 
 Stdlib only. Python 3.10+.
+Every run also keeps a dated copy in out/history/summary-YYYY-MM-DD.json for the 30-day re-run.
 Usage: python3 recommend.py out/answers.json --name "Her Brand" --out out/ [--motif analog|cyberpunk|y2k-blog]
+       [--compare out/history/summary-2026-09-28.json]   prints and stamps "last month 3/10, today 5/10"
 """
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import re
 import sys
@@ -185,6 +188,40 @@ def score(answers: list[dict], name: str, aliases: list[str], ignore: list[str])
     }
 
 
+# ---------- the 30-day re-run ----------
+
+def load_previous(path: Path, name: str, aliases: list[str], ignore: list[str]) -> dict:
+    """A previous summary.json, or a previous answers.json scored the same way as today."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if isinstance(data, dict) and "named" in data and "total" in data:
+        return {"named": int(data["named"]), "total": int(data["total"]), "date": str(data.get("date") or ""),
+                "questions": data.get("questions") or []}
+    meta, answers = load_answers(Path(path))
+    r = score(answers, name, aliases, ignore)
+    return {"named": r["named"], "total": r["total"], "date": str(meta.get("date") or ""),
+            "questions": [{"question": q["question"], "you_named": q["you_named"]} for q in r["questions"]]}
+
+
+def compare(prev: dict, result: dict, today: str) -> dict:
+    """The delta between two runs: the totals, a plain line for the receipt, and which questions moved."""
+    days = None
+    try:
+        days = (dt.date.fromisoformat(today) - dt.date.fromisoformat(prev["date"])).days
+    except (ValueError, TypeError, KeyError):
+        days = None
+    label = "last month" if days is not None and 20 <= days <= 45 else (
+        f"on {prev['date']}" if prev.get("date") else "last time")
+    before = {str(q.get("question", "")).lower(): bool(q.get("you_named")) for q in prev.get("questions", [])}
+    now = {q["question"].lower(): (q["question"], q["you_named"]) for q in result["questions"]}
+    won = [orig for low, (orig, hit) in now.items() if hit and before.get(low) is False]
+    lost = [orig for low, (orig, hit) in now.items() if not hit and before.get(low) is True]
+    change = result["named"] - prev["named"]
+    return {"before": prev["named"], "before_total": prev["total"], "before_date": prev.get("date", ""),
+            "after": result["named"], "after_total": result["total"], "today": today, "days": days,
+            "change": change, "newly_named": won, "newly_lost": lost,
+            "line": f"{label} {prev['named']}/{prev['total']}, today {result['named']}/{result['total']}"}
+
+
 # ---------- fix list ----------
 
 def render_fix_list(result: dict, meta: dict, name: str) -> str:
@@ -244,6 +281,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--motif", choices=MOTIFS, help="analog, cyberpunk or y2k-blog (default: style.json motif)")
     ap.add_argument("--style", type=Path, help="a style.json (default: ./style.json, then "
                     "~/.rocha-coded/style.json, then the bundled Rocha Coded example)")
+    ap.add_argument("--compare", type=Path, help="a previous summary.json or answers.json, for the 30-day delta")
     args = ap.parse_args(argv)
 
     try:
@@ -268,18 +306,41 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     style_path = find_style(args.style)
     style = load_style(style_path)
+    today = str(meta.get("date") or dt.date.today().isoformat())
+    delta = None
+    if args.compare:
+        try:
+            delta = compare(load_previous(args.compare, name, aliases, ignore), result, today)
+        except (OSError, ValueError, KeyError) as exc:
+            print(f"Could not read the previous run {args.compare} ({exc}). Making today's receipt without it.",
+                  file=sys.stderr)
+    line = delta["line"] if delta else ""
     out = args.out
     out.mkdir(parents=True, exist_ok=True)
-    (out / "receipt.html").write_text(render_receipt(result, meta, name, style=style, motif=args.motif), encoding="utf-8")
+    (out / "receipt.html").write_text(render_receipt(result, meta, name, style=style, motif=args.motif, delta=line),
+                                      encoding="utf-8")
     card = out / "receipt-card.html"
-    card.write_text(render_receipt(result, meta, name, card=True, style=style, motif=args.motif), encoding="utf-8")
+    card.write_text(render_receipt(result, meta, name, card=True, style=style, motif=args.motif, delta=line),
+                    encoding="utf-8")
     (out / "fix-list.md").write_text(render_fix_list(result, meta, name), encoding="utf-8")
     summary = {k: result[k] for k in ("total", "named", "sources", "sent_instead", "lost")}
     summary["questions"] = [{k: q[k] for k in ("question", "sources", "named", "you_named")}
                             for q in result["questions"]]
+    summary["date"] = today
+    if delta:
+        summary["compare"] = delta
+        (out / "delta.json").write_text(json.dumps(delta, indent=2), encoding="utf-8")
     (out / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (out / "history").mkdir(exist_ok=True)
+    (out / "history" / f"summary-{today}.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
     print(f"Recommended {result['named']} out of {result['total']}.")
+    if delta:
+        print(delta["line"].capitalize() + ".")
+        for q in delta["newly_named"]:
+            print(f"  now named: {q}")
+        for q in delta["newly_lost"]:
+            print(f"  slipped: {q}")
     look = "the bundled Rocha Coded example" if style_path == STYLE_EXAMPLE else str(style_path)
     print(f"Style: {look} · motif: {resolve_motif(args.motif, style)}")
     print(f"Receipt: {out / 'receipt.html'}")

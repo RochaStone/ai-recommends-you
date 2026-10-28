@@ -1,0 +1,82 @@
+/* Pages the five fixes write (entity page, answers, the fixes panel).
+   Defaults are the bundled example; style.json overrides the :root variables. No glow, no coloured shadow on type. */
+:root {
+  --ground: #50163C; --wine: #682047; --ink: #3B1230; --cream: #FFF7F4; --paper: #FFE3F1;
+  --candy: #FE9DCA; --marker: #C2246E; --plum: #50163C; --gold: #E9B949;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --label: "Bricolage Grotesque", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  --scrawl: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
+  --pixel: "Silkscreen", "Pixelify Sans", ui-monospace, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--ground); color: var(--ink); font-family: var(--serif); font-size: 18px; line-height: 1.55; }
+body.page { padding: 40px 16px 64px; }
+body.card { width: 1080px; height: 1350px; padding: 56px; overflow: hidden; }
+a { color: var(--marker); }
+h1 { font-family: var(--serif); font-weight: 900; font-size: clamp(36px, 8vw, 64px); line-height: 1; color: var(--wine); margin: 6px 0 14px; letter-spacing: -.02em; }
+h2 { font-family: var(--label); font-weight: 800; font-size: 20px; margin: 26px 0 8px; color: var(--wine); }
+p, li { margin: 0 0 10px; }
+ul, ol { padding-left: 22px; }
+.answer { font-size: 22px; border-left: 4px solid var(--gold); padding-left: 14px; }
+.quote { list-style: none; padding: 0; }
+.quote li { background: color-mix(in srgb, var(--candy) 22%, transparent); padding: 8px 12px; border-radius: 4px; }
+.fixes { list-style: none; padding: 0; counter-reset: fix; }
+.fixes li { display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: start; margin-bottom: 18px; }
+.fixes .badge { font-family: var(--pixel); background: var(--ground); color: var(--gold); text-align: center; padding: 6px 0; font-size: 20px; }
+.fixes b { font-family: var(--label); font-weight: 800; display: block; font-size: 24px; }
+.fixes code { font-family: var(--mono); font-size: 15px; color: var(--wine); }
+.stamp, .credit { font-family: var(--mono); font-size: 13px; opacity: .8; margin-top: 18px; }
+.px { font-family: var(--pixel); }
+.kicker { font-family: var(--label); font-weight: 800; letter-spacing: .14em; font-size: 12px; text-transform: uppercase; color: var(--wine); }
+
+/* analog: paper you could hold */
+.pg-sheet { max-width: 760px; margin: 0 auto; background: var(--cream); padding: 34px 32px; border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+  box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 16px 34px rgba(0,0,0,.35); }
+.pg-sheet .kicker { border-bottom: 2px solid var(--gold); padding-bottom: 8px; }
+
+/* cyberpunk: the girly terminal (soft scanlines, no glow, no flicker) */
+.pg-crt { max-width: 820px; margin: 0 auto; background: var(--plum); border: 10px solid var(--wine); border-radius: 18px; }
+.pg-crt .bezel { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--wine); color: var(--cream); font-size: 12px; }
+.pg-crt .led { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.pg-crt .led.candy { background: var(--candy); } .pg-crt .led.gold { background: var(--gold); }
+.pg-crt .screws { margin-left: auto; display: flex; gap: 6px; } .pg-crt .screws i { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); display: inline-block; }
+.pg-crt .screen { padding: 22px 24px; color: var(--cream); font-family: var(--mono); font-size: 16px;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 3px, color-mix(in srgb, var(--ink) 35%, transparent) 3px, color-mix(in srgb, var(--ink) 35%, transparent) 4px); }
+.pg-crt h1, .pg-crt h2 { color: var(--candy); font-family: var(--pixel); font-weight: 400; }
+.pg-crt h1 { font-size: clamp(26px, 6vw, 42px); }
+.pg-crt a, .pg-crt .fixes code { color: var(--candy); }
+.pg-crt .quote li { background: color-mix(in srgb, var(--candy) 18%, transparent); }
+.pg-crt .fixes .badge { background: var(--candy); color: var(--plum); }
+.pg-crt .ps { color: var(--candy); }
+.pg-crt .cursor { display: inline-block; width: .6em; height: 1.1em; background: var(--candy); vertical-align: text-bottom; margin-left: 4px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pg-crt .cursor { animation: none; } }
+
+/* y2k-blog: the 2003 blog window */
+.pg-win { max-width: 980px; margin: 0 auto; background: var(--cream); border: 2px solid var(--plum); box-shadow: 4px 4px 0 rgba(0,0,0,.35); }
+.pg-win .titlebar { display: flex; align-items: center; gap: 10px; background: var(--plum); color: var(--cream); padding: 6px 10px; font-size: 13px; }
+.pg-win .btns { display: flex; gap: 6px; } .pg-win .btns i { width: 12px; height: 12px; background: var(--gold); border: 1px solid var(--ink); display: inline-block; }
+.pg-win .marquee { overflow: hidden; white-space: nowrap; background: var(--paper); border-bottom: 1px solid var(--plum); font-family: var(--mono); font-size: 13px; padding: 4px 10px; color: var(--wine); }
+.pg-win .marquee .pix, .pg-win .side .pix { color: var(--gold); vertical-align: middle; }
+.pg-win .winbody { display: grid; grid-template-columns: minmax(0, 1fr) 220px; }
+.pg-win .post { padding: 26px 28px; font-family: var(--label); }
+.pg-win .post h1 { font-family: var(--serif); }
+.pg-win .side { background: var(--paper); border-left: 1px solid var(--plum); padding: 16px; font-family: var(--label); font-size: 14px; }
+.pg-win .side h3 { font-size: 12px; color: var(--wine); margin: 12px 0 4px; font-weight: 400; }
+.pg-win .counter b { font-family: var(--mono); background: var(--ink); color: var(--gold); padding: 2px 6px; }
+@media (max-width: 640px) { .pg-win .winbody { grid-template-columns: 1fr; } .pg-win .side { border-left: 0; border-top: 1px solid var(--plum); } }
+
+/* share-card size (1080x1350): fill the frame, bigger type */
+body.card main.frame { height: 100%; display: flex; flex-direction: column; max-width: none; }
+body.card main.frame > * { flex-shrink: 0; }
+body.card .pg-win .winbody, body.card .pg-crt .screen { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+body.card { font-size: 22px; }
+body.card h1 { font-size: 72px; margin-bottom: 18px; }
+body.card .answer { font-size: 26px; margin-bottom: 30px; }
+body.card .fixes li { grid-template-columns: 68px 1fr; margin-bottom: 26px; }
+body.card .fixes .badge { font-size: 24px; padding: 8px 0; }
+body.card .fixes b { font-size: 30px; }
+body.card .fixes code { font-size: 18px; }
+body.card .pg-win .winbody { grid-template-columns: minmax(0, 1fr) 240px; }
+body.card .pg-win .side { font-size: 17px; }

@@ -6,6 +6,7 @@
 Writes:
   docs/img/hero-y2k.png        the y2k-blog window with the sample receipt inside (1080x1350)
   docs/img/triptych.png        the same receipt in analog | cyberpunk | y2k-blog (1620x720)
+  docs/img/fixes-y2k.png       the five free fixes panel, a y2k-blog window (1080x1350)
   docs/img/step-01..05.svg     pixel step badges for "Start here"
   docs/img/divider.svg         a gold pixel hairline
   docs/img/heart.svg           a pixel heart
@@ -21,6 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 import recommend  # noqa: E402
+from solutions.page_render import e, render_page  # noqa: E402
 
 IMG = ROOT / "docs" / "img"
 SAMPLE = ROOT / "examples" / "answers.sample.json"
@@ -72,6 +74,25 @@ figcaption {{ font-family: "Silkscreen", monospace; color: {cream}; font-size: 2
 </style></head><body>{cells}</body></html>"""
 
 
+FIXES = [
+    ("01", "One clear page", "who you are, for whom, where, in your words", "out/entity/index.html"),
+    ("02", "Answer what you lost", "a direct answer for every question you were not named on", "out/answers/"),
+    ("03", "Get mentioned", "ten real places in your niche and a three-line pitch", "out/mentions-plan.md"),
+    ("04", "llms.txt", "a short file the assistants read first", "out/llms/llms.txt"),
+    ("05", "Run it again in 30 days", "last month 1/10, today 3/10", "--compare"),
+]
+
+
+def fixes_html(style: dict) -> str:
+    items = "".join(f'<li><span class="badge">{n}</span><span><b>{e(t)}</b>{e(w)}<br><code>{e(f)}</code></span></li>'
+                    for n, t, w, f in FIXES)
+    body = (f"<h1>The five free fixes</h1><p class=\"answer\">The receipt tells you the gap. "
+            f"These five free fixes close it.</p><ol class=\"fixes\">{items}</ol>")
+    return render_page("five free fixes", body, style=style, motif="y2k-blog", window="five-free-fixes.exe",
+                       sidebar=[("about me", "Hush Hour Studio, a made-up pottery retreat"), ("mood", "certain ✧"),
+                                ("currently reading", "my fix list")], date="2026-10-28", card=True)
+
+
 def main() -> int:
     style = recommend.load_style()
     pal = style.get("palette", {})
@@ -109,6 +130,11 @@ def main() -> int:
             strip.write_text(triptych_html(pngs, ground, gold, cream), encoding="utf-8")
             ok_all, msg = recommend.render_png(strip, IMG / "triptych.png", 1620, 720)
             print(msg.replace("Share card", "Triptych"))
+            panel = tmp / "fixes.html"
+            panel.write_text(fixes_html(style), encoding="utf-8")
+            ok, msg = recommend.render_png(panel, IMG / "fixes-y2k.png")
+            ok_all &= ok
+            print(msg.replace("Share card", "Fixes panel"))
     (ROOT / "examples" / "receipt.sample.html").write_text(
         recommend.render_receipt(result, meta, meta["name"], style=style, motif="analog"), encoding="utf-8")
     (ROOT / "examples" / "fix-list.sample.md").write_text(
@@ -123,6 +149,7 @@ No photos, no real people, no real businesses.
 |---|---|
 | `docs/img/hero-y2k.png` | the sample receipt in the y2k-blog motif, used as the README hero |
 | `docs/img/triptych.png` | the same receipt in analog, cyberpunk and y2k-blog, side by side |
+| `docs/img/fixes-y2k.png` | the five free fixes panel in the y2k-blog motif |
 | `docs/img/step-01.svg` to `step-05.svg` | pixel step badges for "Start here" |
 | `docs/img/divider.svg` | a gold pixel hairline between README sections |
 | `docs/img/heart.svg` | the pixel heart beside "If it goes wrong" |

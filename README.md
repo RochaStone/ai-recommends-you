@@ -69,7 +69,55 @@ The full steps are under [Claude Cowork](#claude-cowork).
   2. mentions of you on other people's pages (directories, podcasts, press in your niche)
   3. short answers, in your own words, to the exact questions you lost
 
-Run it again in four to six weeks. Same questions. Watch the total move.
+Then it gives you the solutions too, free. Read on.
+
+<p align="center"><img src="docs/img/divider.svg" width="360" alt=""></p>
+
+## The receipt tells you the gap. These five free fixes close it.
+
+<p align="center"><img src="docs/img/fixes-y2k.png" width="480" alt="A cream 2003-style blog window titled five-free-fixes.exe listing five numbered fixes: one clear page, answer what you lost, get mentioned, llms.txt, and run it again in 30 days, with the file each one makes."></p>
+
+When your receipt is ready, Claude asks: "Want to do the five free fixes now?"
+Say yes and it goes one fix at a time, asks one question at a time, and tells you what it is making before it makes it.
+You can also start them any time by saying "do my five free fixes".
+First it asks you about you: who you are, what you do, for whom, where, your proof and how people work with you.
+It keeps your words exactly as you say them.
+
+<img src="docs/img/step-01.svg" height="22" alt="Step 1"> **One clear page.** A page that says who you are, for whom and where, in your words, with a hidden label the assistants read (that label is called JSON-LD, a small block of code that describes your business to machines).
+   ```sh
+   python3 ~/.claude/skills/ai-recommends-you/solutions/entity_page.py out/entity.json --out out/
+   ```
+   You will see `out/entity/index.html` (your page), `index.md` (the words to paste) and `DEPLOY.md`, which shows three ways to put it online: your own site, your Substack About page, or GitHub Pages for free.
+
+<img src="docs/img/step-02.svg" height="22" alt="Step 2"> **Answer the questions you lost.** A short, direct answer for every question you were not named on, so the assistants have your answer to repeat.
+   ```sh
+   python3 ~/.claude/skills/ai-recommends-you/solutions/answers.py out/summary.json out/entity.json --out out/
+   ```
+   You will see one file per lost question in `out/answers/`, and all of them on one FAQ page. Any answer marked DRAFT was built from your facts. Read it aloud and change any word that is not yours.
+
+<img src="docs/img/step-03.svg" height="22" alt="Step 3"> **Get mentioned on other people's pages.** Claude asks your niche, searches for real directories, podcasts and communities, and writes a three-line pitch for each, in your words.
+   ```sh
+   python3 ~/.claude/skills/ai-recommends-you/solutions/mentions.py out/entity.json --places out/mentions.json --out out/
+   ```
+   You will see `out/mentions-plan.md` with up to ten real places and your pitches. If Claude has no web search, you get a checklist of exactly what to search instead. Nothing is made up. For podcasts, the sibling kit [Podcast Outreach Engine](https://github.com/RochaStone/podcast-outreach-engine) takes it from there.
+
+<img src="docs/img/step-04.svg" height="22" alt="Step 4"> **llms.txt.** A short file at the top of your site that the assistants read first, plus a plain note on letting their robots in.
+   ```sh
+   python3 ~/.claude/skills/ai-recommends-you/solutions/llms.py out/entity.json --out out/
+   ```
+   You will see `out/llms/llms.txt`, `llms-full.txt` and `AI-CRAWLERS.md`. The note tells you how to check your `robots.txt` (a note your site leaves for visiting robots) in one minute.
+
+<img src="docs/img/step-05.svg" height="22" alt="Step 5"> **Run it again in 30 days.** Every receipt keeps a dated copy of your numbers. In a month, ask the same questions and compare.
+   ```sh
+   python3 ~/.claude/skills/ai-recommends-you/recommend.py out/answers.json --out out/ --compare out/history/summary-2026-09-28.json
+   ```
+   You will see "last month 3/10, today 5/10" printed and on your receipt, plus which questions moved. The details are in [solutions/RERUN.md](solutions/RERUN.md).
+
+In Cowork, say "do my five free fixes" in the same task. Claude runs the same steps in the folder you shared.
+
+Optional, for the curious: if you install [egeo](https://pypi.org/project/egeo/) (a free open-source tool, `pip install egeo`), fix 2 also runs each answer through its rewrite and keeps the report. It needs its own model key, and nothing is missing without it.
+
+The honest part: consistency across every surface is the real lever. The same name, the same line and the same links everywhere. You can do it alone with these files, or with Rocha.
 
 <p align="center"><img src="docs/img/divider.svg" width="360" alt=""></p>
 
@@ -145,8 +193,9 @@ The same file works across every Rocha Coded tool, so you make it once.
 | `recommend.py` | finds the names in each answer, scores you, writes the receipt, the card and the fix list |
 | `receipt_render.py` | draws the receipt in all three motifs from one function, and makes the PNG |
 | `ask_api.py` | API mode: asks ChatGPT and Perplexity with plain Python, no extra installs |
-| `assets/` | the three looks: `receipt.css` (analog), `motif-cyberpunk.css`, `motif-y2k.css` |
-| `examples/` | the fictional sample (answers, receipt page, share card, fix list) and Rocha's example style |
+| `solutions/` | the five free fixes: `entity_page.py`, `answers.py`, `mentions.py`, `llms.py`, `to_gaps.py` (for egeo), `RERUN.md` |
+| `assets/` | the three looks: `receipt.css` (analog), `motif-cyberpunk.css`, `motif-y2k.css`, and `page.css` for the fix pages |
+| `examples/` | the fictional sample (answers, receipt page, share card, fix list, interview, last month's run) and Rocha's example style |
 | `scripts/make-readme-images.py` | makes every image in this README from the tool itself, listed in `docs/IMAGES.md` |
 | `tests/` | the smoke tests, and `tests/TESTING.md` with exactly what was run |
 | `style.example.json`, `STYLE.md` | your look in one file, and what each key does |
@@ -159,6 +208,13 @@ For the curious, run it by hand:
 ```sh
 python3 recommend.py examples/answers.sample.json --out out/ --motif cyberpunk
 ```
+
+## Credits
+The five fixes stand on open-source work, credited with thanks. Nothing here is copied from them.
+- [egeo](https://pypi.org/project/egeo/) from [mverab/eGEOagents](https://github.com/mverab/eGEOagents), MIT. Optional: called only if you installed it. `solutions/to_gaps.py` writes the gaps file its docs describe.
+- [onvoyage-ai/gtm-engineer-skills](https://github.com/onvoyage-ai/gtm-engineer-skills), MIT. The fix method follows its audit-website-aeo, improve-aeo-geo and build-backlinks skills.
+- [llmstxt.org](https://llmstxt.org), the llms.txt proposal that `solutions/llms.py` follows.
+- Want a fuller monitor you host yourself? Look at [elmohq/elmo](https://github.com/elmohq/elmo) and searchstack-aeo.
 
 ## Licence
 MIT. See [LICENSE](LICENSE). Copyright (c) 2026 Rochelle Livingstone / Thriving Era Studio.

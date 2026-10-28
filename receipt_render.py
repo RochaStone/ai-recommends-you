@@ -144,7 +144,7 @@ def style_head(style: dict, motif: str = "analog") -> str:
 
 # ---------- the receipt, three skins ----------
 
-def _data(result: dict, meta: dict, name: str, style: dict) -> dict:
+def _data(result: dict, meta: dict, name: str, style: dict, delta: str = "") -> dict:
     lines_cfg = style.get("lines") if isinstance(style.get("lines"), dict) else {}
     date = meta.get("date") or dt.date.today().isoformat()
     return {
@@ -156,7 +156,7 @@ def _data(result: dict, meta: dict, name: str, style: dict) -> dict:
                                                       "made with Rocha Coded") if x and str(x).strip()),
         "instead": ", ".join(x["name"] for x in result["sent_instead"][:3]) or "nobody, yet",
         "questions": result["questions"], "sources": result["sources"],
-        "named": result["named"], "total": result["total"],
+        "named": result["named"], "total": result["total"], "delta": str(delta or "").strip(),
     }
 
 
@@ -190,7 +190,8 @@ def _analog(d: dict, qlen: int, nlen: int, frame: bool) -> str:
   <ol class="lines">{lines}</ol>
   <section class="foot">
     <div class="subs">{subs}
-      <div class="sub tax"><span>SENT TO INSTEAD</span><span>{_e(_short(d["instead"], nlen))}</span></div>
+      <div class="sub tax"><span>SENT TO INSTEAD</span><span>{_e(_short(d["instead"], nlen))}</span></div>{
+      f'<div class="sub delta"><span>SINCE LAST TIME</span><span>{_e(d["delta"])}</span></div>' if d["delta"] else ""}
     </div>
     <div class="total"><span>TOTAL</span><span>recommended <b>{d["named"]}/{d["total"]}</b></span></div>
     {scrawl}
@@ -225,7 +226,8 @@ def _cyberpunk(d: dict, qlen: int, nlen: int) -> str:
     <div class="bars">{bars}
       <div class="bar total"><span class="px">recommended</span>{_blocks(d["named"], d["total"])}<b>{d["named"]}/{d["total"]}</b></div>
     </div>
-    <p class="sys">› sent to instead: {_e(_short(d["instead"], nlen))}</p>
+    <p class="sys">› sent to instead: {_e(_short(d["instead"], nlen))}</p>{
+    f'<p class="sys delta">› {_e(d["delta"])}</p>' if d["delta"] else ""}
     <p class="prompt last"><span class="ps">rocheverse:~$</span>{echo}<span class="cursor" aria-hidden="true"></span></p>
     <p class="credit px">{_e(d["credit"])}</p>
   </div>
@@ -253,10 +255,10 @@ def _y2k(d: dict, inner: str) -> str:
 
 
 def render_receipt(result: dict, meta: dict, name: str, card: bool = False,
-                   style: dict | None = None, motif: str | None = None) -> str:
+                   style: dict | None = None, motif: str | None = None, delta: str = "") -> str:
     style = load_style() if style is None else style
     motif = resolve_motif(motif, style)
-    d = _data(result, meta, name, style)
+    d = _data(result, meta, name, style, delta)
     if motif == "cyberpunk":
         body = _cyberpunk(d, *((46, 58) if card else (90, 80)))
     elif motif == "y2k-blog":

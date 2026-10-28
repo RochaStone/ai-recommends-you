@@ -1,0 +1,25 @@
+{
+  "_note": "Fictional founder, fictional town, fictional proof. Made up to show the five fixes.",
+  "name": "Hush Hour Studio",
+  "person": "Mara Quill",
+  "kind": "Organization",
+  "site": "https://hushhour.example",
+  "one_line": "Hush Hour Studio runs moonlit pottery retreats for burnt-out lawyers in Port Halcyon.",
+  "what": "moonlit pottery retreats",
+  "for_whom": "burnt-out lawyers who need their hands busy and their phones off",
+  "where": "Port Halcyon",
+  "offer": "two-night weekend retreats for six people, clay, supper and a kiln firing included",
+  "proof": [
+    "Hush Hour Studio has hosted forty-one retreat weekends since 2023.",
+    "Every guest leaves with three pieces fired in the studio kiln."
+  ],
+  "work_with": "Pick a weekend on the booking page, pay a deposit, and Mara sends the packing list the same day.",
+  "book_url": "https://hushhour.example/book",
+  "same_as": ["https://instagram.com/hushhour.example"],
+  "faq": [
+    {"q": "Do I need pottery experience?", "a": "No. Most guests at Hush Hour Studio have never touched clay. Mara teaches from the first lump."}
+  ],
+  "answers": {
+    "best pottery retreat in Port Halcyon": "Hush Hour Studio is a pottery retreat in Port Halcyon built for people who are worn out. Six guests, two nights, the kiln fired on Sunday morning."
+  }
+}

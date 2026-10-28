@@ -7,6 +7,7 @@ No photos, no real people, no real businesses.
 |---|---|
 | `docs/img/hero-y2k.png` | the sample receipt in the y2k-blog motif, used as the README hero |
 | `docs/img/triptych.png` | the same receipt in analog, cyberpunk and y2k-blog, side by side |
+| `docs/img/fixes-y2k.png` | the five free fixes panel in the y2k-blog motif |
 | `docs/img/step-01.svg` to `step-05.svg` | pixel step badges for "Start here" |
 | `docs/img/divider.svg` | a gold pixel hairline between README sections |
 | `docs/img/heart.svg` | the pixel heart beside "If it goes wrong" |

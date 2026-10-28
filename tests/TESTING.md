@@ -56,7 +56,46 @@ were also rendered side by side at 390px wide: page width stayed 390 in each, so
 ```
 Result: 9 passed, 0 failed, **SAFE TO PUBLISH**.
 
+## 5. The five free fixes (28 Oct 2026, Python 3.12.8, macOS, Chrome installed)
+```sh
+python3 -m unittest discover -s tests -v
+```
+Result: **57 tests: 56 OK, 1 skipped.** The skipped one is the egeo integration test. It runs only when
+egeo is importable and on the PATH, and egeo was not installed here. Every other test runs only our own code.
+The 28 new tests in `tests/test_solutions.py` cover:
+- to_gaps: one row per buyer question with only `query`, `cited` and `sources` (the generic gaps shape egeo's
+  CLI docs describe); `cited` matches the receipt; `sources` are the links from answers that missed her; a clean
+  error with no name
+- entity page: the JSON-LD block parses, holds Organization, Service and FAQPage in one graph, links the service to
+  her, and switches to Person when she trades under her own name; the direct answer comes before everything else;
+  `</script>` in her text cannot close the block; a `javascript:` site is dropped; the page is signed with her name,
+  not Rocha's; a missing name is a kind error and exit code 2
+- three motifs for the entity page (sheet, `rocheverse:~$` prompt, hit counter 000,777), one JSON-LD block in each,
+  no glow in `page.css`
+- answers: one file per lost question with a FAQPage block that parses, her own written answer used word for word,
+  the rest marked DRAFT, duplicate slugs kept apart, lost questions read from summary.json or scored from answers.json
+- mentions: places with no link or no source are dropped, duplicates dropped, capped at ten; no web search gives a
+  checklist and the Podcast Outreach Engine hand-off; every pitch is three lines starting with her name
+- llms.txt: exactly one H1, a blockquote, H2 sections About, Answers, Optional, every list item `[name](url): notes`,
+  one answer link per lost question; works with no site (links start with `/`); the crawler note lists the robots
+- compare: "last month 1/10, today 3/10" for runs 30 days apart, a dated line otherwise, which questions moved,
+  the line printed on the receipt in all three motifs, `delta.json` and `out/history/summary-<date>.json` written,
+  a previous answers.json works too, and a broken previous file still produces today's receipt
+- inheritance: a user style borrows missing palette entries and never Rocha's owner or handle; no em dashes in any output
+
+By hand: the full chain (`recommend.py --compare`, `entity_page.py`, `answers.py`, `mentions.py`, `llms.py`,
+`to_gaps.py`) was run on the fictional sample into a scratch folder. The entity page was rendered to PNG in all three
+motifs and checked by eye; that caught the lead line and proof repeating in "In short", now fixed.
+`python3 scripts/make-readme-images.py` rendered the new fixes panel at 1080x1350 and it was checked by eye; the first
+two tries left a third of the card empty and then overflowed, and the card CSS was tuned until it fit.
+
 ## Not tested
+- **egeo** (`egeo optimize` and `egeo fix-gaps`). It is optional and was not installed. The command lines follow
+  egeo's published CLI docs (egeoagents.com/docs/cli). `fix-gaps` also needs her own `project.yaml`, which we do not write.
+- **Fix 3 with live web search.** The agent does the searching; the script only cleans and formats what it is given.
+- **JSON-LD in a validator.** The blocks parse as JSON and use schema.org types, but were not run through Google's
+  Rich Results Test or the schema.org validator.
+- **Publishing the entity page, answers or llms.txt** on a real site, Substack or GitHub Pages.
 - **Browser mode** against live ChatGPT and Perplexity. It needs the Claude in Chrome extension and a logged-in account,
   and it was not run against a real account for this build.
 - **API mode** against the live APIs. No keys were used. The request shapes follow the OpenAI Responses API and the
