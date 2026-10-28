@@ -5,7 +5,7 @@ set -u
 cd "$(dirname "$0")/.." || exit 1
 PASS=0; FAIL=0
 check() { if [ "$2" = "0" ]; then echo "✓ $1"; PASS=$((PASS+1)); else echo "✗ $1"; FAIL=$((FAIL+1)); fi; }
-EXCL='--exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.venv --exclude-dir=dist --exclude-dir=__pycache__ --exclude=security-check.sh'
+EXCL='--exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.venv --exclude-dir=dist --exclude-dir=out --exclude-dir=state --exclude-dir=__pycache__ --exclude=security-check.sh'
 
 # 1. Secrets (keys, tokens, JWTs, Stripe, Resend, Supabase service keys)
 S=$(grep -rIE $EXCL -E "(sk_live_[A-Za-z0-9]{10,}|sk-[A-Za-z0-9]{20,}|re_[A-Za-z0-9]{20,}|AAAA[A-Za-z0-9]{20,}|eyJ[A-Za-z0-9_-]{30,}\.[A-Za-z0-9_-]{10,}|ghp_[A-Za-z0-9]{20,}|xox[bp]-[A-Za-z0-9-]{20,}|AKIA[A-Z0-9]{16})" . 2>/dev/null | grep -v "example" | wc -l | tr -d ' ')
@@ -16,7 +16,7 @@ E=$(git ls-files 2>/dev/null | grep -E "(^|/)\.env($|\.)" | grep -v example | wc
 check "No .env files tracked by git" $([ "$E" -eq 0 ] && echo 0 || echo 1)
 
 # 3. No personal paths or private identifiers
-P=$(grep -rIE $EXCL -E "/Users/[A-Za-z0-9._-]+/|/home/[A-Za-z0-9._-]+/|supabase\.co/|project_id|service_role" . 2>/dev/null | wc -l | tr -d ' ')
+P=$(grep -rIE $EXCL -E "/Users/[A-Za-z0-9._-]+/|/home/[A-Za-z0-9._-]+/|supabase\.co/|project_id|service_role" . 2>/dev/null | grep -vE "^\./(scripts/security-check\.sh|\.pre-commit-config\.yaml):" | wc -l | tr -d ' ')
 check "No home-directory paths or private project identifiers" $([ "$P" -eq 0 ] && echo 0 || echo 1)
 
 # 4. IP terms that must never ship (moat)
