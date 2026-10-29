@@ -137,7 +137,7 @@ def name_matches(name: str, aliases: list[str], text: str, named: list[str]) -> 
             if not _denied(hay, m.start()):
                 return True
         for n in pool:
-            if len(n) >= 4 and (t == n or t in n or n in t):
+            if len(n) >= 4 and (t == n or t in n):
                 i = hay.find(n)
                 if i == -1 or not _denied(hay, i):
                     return True

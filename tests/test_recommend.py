@@ -311,3 +311,10 @@ def test_denied_name_in_named_list_is_not_a_recommendation():
     import recommend as r
     text = "No review found for Conscious Founder Operating System. Results were Founder OS and Solo Founder OS."
     assert r.name_matches("Rocha", ["Conscious Founder Operating System"], text, ["Conscious Founder Operating System", "Founder OS"]) is False
+
+
+def test_a_shorter_named_business_inside_her_alias_is_not_her():
+    import recommend as r
+    # "Founder OS" is a different company; it sits inside the alias "Conscious Founder OS" and must not count
+    assert r.name_matches("Rocha", ["Conscious Founder OS"], "Results were Founder OS (founderos.com) and Solo Founder OS.", ["Founder OS", "Solo Founder OS"]) is False
+    assert r.name_matches("Rocha", ["Thriving Era"], "Try Rocha's Thriving Era Studio.", ["Thriving Era Studio"]) is True
