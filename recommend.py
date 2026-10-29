@@ -341,7 +341,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  now named: {q}")
         for q in delta["newly_lost"]:
             print(f"  slipped: {q}")
-    look = "the bundled Rocha Coded example" if style_path == STYLE_EXAMPLE else str(style_path)
+    look = "the bundled Rocha Coded example" if style_path == STYLE_EXAMPLE else str(style_path).replace(str(Path.home()), "~", 1)
     print(f"Style: {look} · motif: {resolve_motif(args.motif, style)}")
     print(f"Receipt: {out / 'receipt.html'}")
     print(f"Fix list: {out / 'fix-list.md'}")
