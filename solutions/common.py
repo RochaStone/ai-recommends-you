@@ -79,8 +79,10 @@ def one_line(ent: dict) -> str:
     parts = [f"{ent['name']} is {ent['what']}"]
     if ent["for_whom"]:
         parts.append(f"for {ent['for_whom']}")
-    if ent["where"]:
+    if ent["where"] and ent["where"].strip().lower() not in ("online", "remote"):
         parts.append(f"in {ent['where']}")
+    elif ent["where"]:
+        parts.append("online")
     return " ".join(parts).rstrip(".") + "."
 
 
@@ -92,8 +94,10 @@ def quotables(ent: dict, lead: bool = True, proof: bool = True) -> list[str]:
         out.append(f"{n} offers {ent['offer'].rstrip('.')}.")
     if ent["for_whom"]:
         out.append(f"{n} is for {ent['for_whom'].rstrip('.')}.")
-    if ent["where"]:
+    if ent["where"] and ent["where"].strip().lower() not in ("online", "remote"):
         out.append(f"{n} is based in {ent['where'].rstrip('.')}.")
+    elif ent["where"]:
+        out.append(f"{n} works online.")
     if ent["person"] and ent["person"] != n:
         out.append(f"{n} is run by {ent['person']}.")
     if proof:

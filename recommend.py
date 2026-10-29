@@ -112,9 +112,10 @@ def extract_entities(text: str, ignore: list[str] | None = None) -> list[str]:
     return found
 
 
-_DENIALS = ("nothing found", "no review", "no reviews", "not found", "couldn't find", "could not find", "didn't find",
-            "did not find", "no results", "doesn't appear", "does not appear", "unrelated", "didn't turn up", "did not turn up",
-            "turned up nothing", "no mention", "not mention", "none mention", "nothing about", "no information", "not recognise", "not recognize")
+_DENIALS = ("nothing found", "no review found", "no reviews found", "not found", "no results", "unrelated",
+            "didn't turn up", "did not turn up", "turned up nothing", "no mention", "none mention", "nothing about",
+            "doesn't appear", "does not appear", "couldn't find anything", "could not find anything",
+            "didn't find anything", "did not find anything", "no information about", "not recognise", "not recognize")
 
 
 def _denied(hay: str, pos: int) -> bool:
@@ -135,8 +136,11 @@ def name_matches(name: str, aliases: list[str], text: str, named: list[str]) -> 
         for m in re.finditer(rf"(?<![\w]){re.escape(t)}(?![\w])", hay):
             if not _denied(hay, m.start()):
                 return True
-        if any(t == n or t in n or n in t for n in pool if len(n) >= 4):
-            return True
+        for n in pool:
+            if len(n) >= 4 and (t == n or t in n or n in t):
+                i = hay.find(n)
+                if i == -1 or not _denied(hay, i):
+                    return True
     return False
 
 
@@ -242,6 +246,7 @@ def compare(prev: dict, result: dict, today: str) -> dict:
 def render_fix_list(result: dict, meta: dict, name: str) -> str:
     niche = meta.get("niche") or "your niche"
     place = meta.get("location") or "your area"
+    place_phrase = "online" if place.strip().lower() in ("online", "remote") else f"in {place}"
     offer = meta.get("offer") or "what you sell"
     winners = [x["name"] for x in result["sent_instead"][:3]]
     lost = result["lost"] or ["(you were named every time, so publish to keep it that way)"]
@@ -261,7 +266,7 @@ what you do, who it is for, and where. The assistants lift sentences like this a
 
 Start with this line and make it yours:
 
-> {name}: {niche} in {place}. We offer {offer}.
+> {name}: {niche}, {place_phrase}. We offer {offer}.
 
 Use the same name everywhere, the same way, every time. Add your location, your prices or
 packages, and how to book. Keep it on a page that loads without a login.
@@ -269,7 +274,7 @@ packages, and how to book. Keep it on a page that loads without a login.
 ## 2. Get mentioned on other people's pages
 Assistants trust what other sites say about you more than what you say about yourself.
 Aim for three new mentions this month in places your buyers already read:
-- a directory or "best of" list for {niche} in {place}
+- a directory or "best of" list for {niche}, {place_phrase}
 - a podcast guest spot or a newsletter feature in your niche
 - a local press piece, a partner's site, or a client's public review that names you
 

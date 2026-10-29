@@ -305,3 +305,9 @@ def test_denial_sentence_is_not_a_recommendation():
     import recommend as r
     assert r.name_matches("Rocha", ["Thriving Era"], "I couldn't find anything about Rocha Thriving Era. The results were unrelated.", []) is False
     assert r.name_matches("Rocha", [], "Rocha at Thriving Era is the one I'd recommend.", []) is True
+
+
+def test_denied_name_in_named_list_is_not_a_recommendation():
+    import recommend as r
+    text = "No review found for Conscious Founder Operating System. Results were Founder OS and Solo Founder OS."
+    assert r.name_matches("Rocha", ["Conscious Founder Operating System"], text, ["Conscious Founder Operating System", "Founder OS"]) is False
