@@ -112,14 +112,29 @@ def extract_entities(text: str, ignore: list[str] | None = None) -> list[str]:
     return found
 
 
+_DENIALS = ("nothing found", "no review", "no reviews", "not found", "couldn't find", "could not find", "didn't find",
+            "did not find", "no results", "doesn't appear", "does not appear", "unrelated", "didn't turn up", "did not turn up",
+            "turned up nothing", "no mention", "not mention", "none mention", "nothing about", "no information", "not recognise", "not recognize")
+
+
+def _denied(hay: str, pos: int) -> bool:
+    """True when the name sits in a sentence that says it was NOT found. A denial is not a recommendation."""
+    start = max(hay.rfind(". ", 0, pos), hay.rfind("\n", 0, pos), 0)
+    end_candidates = [i for i in (hay.find(". ", pos), hay.find("\n", pos)) if i != -1]
+    end = min(end_candidates) if end_candidates else len(hay)
+    sentence = hay[start:end]
+    return any(d in sentence for d in _DENIALS)
+
+
 def name_matches(name: str, aliases: list[str], text: str, named: list[str]) -> bool:
     """True if her name (or an alias) appears in the answer text or the named list."""
     targets = [t.strip().lower() for t in [name, *aliases] if t and t.strip()]
     hay = text.lower()
     pool = [n.lower() for n in named]
     for t in targets:
-        if re.search(rf"(?<![\w]){re.escape(t)}(?![\w])", hay):
-            return True
+        for m in re.finditer(rf"(?<![\w]){re.escape(t)}(?![\w])", hay):
+            if not _denied(hay, m.start()):
+                return True
         if any(t == n or t in n or n in t for n in pool if len(n) >= 4):
             return True
     return False

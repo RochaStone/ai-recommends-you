@@ -299,3 +299,9 @@ class TestMotifs(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_denial_sentence_is_not_a_recommendation():
+    import recommend as r
+    assert r.name_matches("Rocha", ["Thriving Era"], "I couldn't find anything about Rocha Thriving Era. The results were unrelated.", []) is False
+    assert r.name_matches("Rocha", [], "Rocha at Thriving Era is the one I'd recommend.", []) is True
